@@ -71,7 +71,7 @@ class Citysnail_Settings {
   ////template 3 - settings section field - dynamically rendered <input/>
 
   static function wp_citysnail_keywords_field() {
-    $options = get_option('wp_citysnail');
+    $options = get_option('wp_citysnail_keywords');
     //error_log(print_r($options));
     //local namespace assignments based on global settings &/or database state
     $divider = (self::$eq_label_toggle_index < count(self::$eq_label_toggle)-1) ?
@@ -92,55 +92,44 @@ class Citysnail_Settings {
   }
 
   static function wp_citysnail_domain_field() {
-    $options = get_option('wp_citysnail');
-    $this_field = 'domain';
-    $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : "(myplace.net)";
-    $value_tag = ($placeholder === "(myplace.net)") ? "placeholder" : "value";
-    echo "<input type='text' name=wp_citysnail[$this_field] {$value_tag}='{$placeholder}'/>";
+    echo self::do_simple_dynamic_input('wp_citysnail','domain','(not set)');
   }
 
   static function wp_citysnail_sitemap_field() {
-    $options = get_option('wp_citysnail');
-    $this_field = 'sitemap';
-    $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : "(page-sitemap.xml)";
-    $value_tag = ($placeholder === "(page-sitemap.xml)") ? "placeholder" : "value";
-    echo "<input type='text' name=wp_citysnail[$this_field] {$value_tag}='{$placeholder}'/>";
+    echo self::do_simple_dynamic_input('wp_citysnail','sitemap','(not set)');
+  }
+
+  static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
+    $options = get_option($db_slug);
+    $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : $fallback_str;
+    $value_tag = ($placeholder === $fallback_str) ? "placeholder" : "value";
+    return "<input type='text' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
   }
 
 
   ////template 2 - after settings section title
 
-  static function wp_citysnail_keywords_section() {
-    $options = get_option('wp_citysnail_keywords');
-    $dropped = $options['drop'];
-    if ($dropped === "TRUE") {
-      error_log('got drop');
-      delete_option('wp_citysnail_keywords');
-    } else {
-      error_log("drop=false");
-    }
-    wp_enqueue_script('wp_citysnail-unset-all', plugin_dir_url(__FILE__) . '../lib/wp_citysnail-unset-all.js');
-    ?>
-    <hr/>
-    <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
-      <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
-      <button id='drop_button' class='button-primary' style='border:1.5px solid red;'>
-        <?php _e("Delete All") ?>
-      </button>
-    </div>
-    <?php
+  static function wp_citysnail_settings_section() {
+    self::do_simple_dynamic_section('wp_citysnail',['citysnail-unset-all']);
   }
 
-  static function wp_citysnail_settings_section() {
-    $options = get_option('wp_citysnail');
+
+  static function wp_citysnail_keywords_section() {
+    self::do_simple_dynamic_section('wp_citysnail_keywords',['citysnail-unset-all']);
+  }
+
+  static function do_simple_dynamic_section($db_slug,$scripts) {
+    $options = get_option($db_slug);
     $dropped = $options['drop'];
     if ($dropped === "TRUE") {
       error_log('got drop');
-      delete_option('wp_citysnail');
+      delete_option($db_slug);
     } else {
       error_log("drop=false");
     }
-    wp_enqueue_script('wp_citysnail-unset-all', plugin_dir_url(__FILE__) . '../lib/wp_citysnail-unset-all.js');
+    foreach ($scripts as $script) {
+      wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
+    }
     ?>
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
