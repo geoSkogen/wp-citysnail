@@ -1,0 +1,164 @@
+
+body {
+  font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+}
+
+nav {
+  padding: 0.5em;
+  margin: 0.5em;
+}
+
+.flexOuterCenter {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.flexOuterStart {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}
+
+.invis {
+  display:none;
+}
+
+.header_link {
+  margin: 0.5em;
+  padding: 0.5em;
+}
+.soup {
+  margin: 0.5em;
+  padding: 0.5em;
+  font-weight: 800;
+  font-size: 56px;
+}
+
+#areYouLost {
+  padding: 0 3.5em;
+}
+
+#balloon {
+  height: 16px;;
+}
+
+p.testP {
+  margin: 0 1em;
+  padding: 0.5em;
+}
+
+input.zeroTest,
+input.zeroTestModal {
+  margin: 1em;
+  padding: 0.75em;
+  border-radius: 2px;
+  border: 1.33px solid cornflowerblue;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 12px;
+  font-family: "Lato";
+}
+
+h1.h_one {
+  font-size: 72px;
+  opacity: 0.15;
+  margin: 0.25em 0 0 0;
+  padding: 0.25em 0 0 0;
+}
+
+h1.h_zero {
+  font-size: 56px;
+  opacity: 0.15;
+  margin: 0.25em 0 0 0;
+  padding: 0.25em 0 0 0;
+}
+
+h2 {
+  margin: 0.25em 0 0 33%;
+}
+
+.middle {
+  text-align: center;
+  margin: 0.25em;
+  padding: 0.25em;
+}
+
+.supporting_text {
+  margin: -1.2em 0 0.25em 0;
+  padding: 0 0 0.25em 0;
+  font-size: 24px;
+  font-family: "Lato";
+}
+
+.smaller {
+  font-size: 20px;
+}
+
+@media only screen and (min-width: 420px ) {
+  h2 {
+    margin: 0.25em 0 0 45%;
+  }
+}
+
+a {
+  font-size: 16px;
+  padding: 0 0.5em;
+  margin: 0 0.5em;
+}
+
+a:link, a:active, a:hover, a:visited {
+  color: cornflowerblue;
+  text-decoration: none;
+}
+
+button,
+input[type="submit"] {
+  color: white;
+  background-color: steelblue;
+  padding: 0.75em;
+  margin: 1em;
+  border-radius: 4px;
+  border: none;
+}
+
+input[type="number"] {
+  width: 36px;
+}
+
+input.zeroTestModal {
+  opacity: 0;
+}
+
+.appWrapper {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: flex-start;
+}
+
+.appShell {
+  display: none;
+}
+
+.app_link {
+  margin: 0 0.5em 1em 0;
+}
+
+.sitemap_item {
+  padding: 1em;
+  border: 1px solid black;
+  border-radius: 3px;
+  display: none;
+}
+
+.tier_1 {
+  display: block;
+}
+
+.fas {
+  cursor: pointer;
+}

@@ -27,36 +27,24 @@ class Citysnail_Options {
   //// template 1 - <form> body
 
   static function wp_citysnail_options_page() {
-    ?>
-    <div class='form-wrap'>
-      <h2>WP Citysnail - Settings</h2>
-      <form method='post' action='options.php' id='wp-citysnail-form'>
-        <?php
-          settings_fields( 'wp_citysnail' );
-          do_settings_sections( 'wp_citysnail' );
-        ?>
-        <div class='inivs-div' style="display:none;">
-          <input class='invis-input' id='drop_field' name=wp_citysnail[drop] type='text'/>
-        </div>
-        <p class='submit'>
-          <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
-        </p>
-      </form>
-    </div>
-    <?php
+    self::do_simple_dynamic_page('wp_citysnail');
   }
 
   static function wp_citysnail_keywords_page() {
+    self::do_simple_dynamic_page('wp_citysnail_keywords');
+  }
+
+  static function do_simple_dynamic_page($db_slug) {
     ?>
     <div class='form-wrap'>
-      <h2>WP Citysnail - Keywords</h2>
-      <form method='post' action='options.php' id='wp-citysnail-keywords-form'>
+      <h2>WP Citysnail</h2>
+      <form method='post' action='options.php' id='wp-citysnail-form'>
         <?php
-          settings_fields( 'wp_citysnail_keywords' );
-          do_settings_sections( 'wp_citysnail_keywords' );
+          settings_fields( $db_slug );
+          do_settings_sections( $db_slug );
         ?>
         <div class='inivs-div' style="display:none;">
-          <input class='invis-input' id='drop_field' name=wp_citysnail_keywords[drop] type='text'/>
+          <input class='invis-input' id='drop_field' name=<?php echo "{$db_slug}[drop]"; ?> type='text'/>
         </div>
         <p class='submit'>
           <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />

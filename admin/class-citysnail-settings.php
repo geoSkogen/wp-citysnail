@@ -77,7 +77,8 @@ class Citysnail_Settings {
 
 
   static function wp_citysnail_keywords_section() {
-    self::do_sitemap_keywords_section('wp_citysnail_keywords',['citysnail_unset_all','citysnail_sitemap_nester']);
+    self::do_sitemap_keywords_section('wp_citysnail_keywords',
+    ['citysnail_unset_all','citysnail_sitemap_nester']);
   }
 
   static function do_simple_dynamic_section($db_slug,$scripts) {
@@ -128,6 +129,7 @@ class Citysnail_Settings {
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
     }
+    wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../css/' . 'yuckstyle' . '.css');
     ?>
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
