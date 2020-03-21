@@ -23,3 +23,19 @@ if ( !class_exists( 'Citysnail_Settings' ) ) {
      array('Citysnail_Settings','wp_citysnail_settings_api_init')
    );
 }
+
+if ( !class_exists( 'Schema' ) ) {
+  include_once 'classes/schema.php';
+}
+
+if ( !class_exists( 'Sitemap_Monster' ) ) {
+  include_once 'classes/sitemap_monster.php';
+}
+
+if ( !class_exists( 'Snail' ) ) {
+  include_once 'classes/snail.php';
+}
+
+if ( !class_exists( 'Sitemap_Snail' ) ) {
+  include_once 'classes/sitemap_snail.php';
+}

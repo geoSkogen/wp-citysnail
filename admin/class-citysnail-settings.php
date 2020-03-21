@@ -2,18 +2,8 @@
 
 class Citysnail_Settings {
 
-  public static $field_count = 5;
-  public static $eq_label_toggle = array(
-    "url",
-    "primary_keyword",
-    "secondary_keyword"
-  );
-
-  public static $current_field_index = 0;
-  public static $eq_label_toggle_index = 0;
-  public static $geo_label_toggle_index = 0;
-
   public static function wp_citysnail_settings_api_init() {
+
     add_settings_section(
       'wp_citysnail_settings',                         //uniqueID
       'Enter Your Domain & Sitemap',   //Title
@@ -44,23 +34,13 @@ class Citysnail_Settings {
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
     );
 
-    for ($i = 1; $i < self::$field_count + 1; $i++) {
-      self::$current_field_index = $i;
-      for ($ii = 0; $ii < count(self::$eq_label_toggle); $ii++) {
-        $field_name = self::$eq_label_toggle[$ii];
-        $this_field = $field_name . "_" . strval(self::$current_field_index);
-        $this_label = ucwords($field_name) . " " . strval(self::$current_field_index);
-
-        add_settings_field(
-          $this_field,                   //uniqueID - "param_1", etc.
-          $this_label,                  //uniqueTitle -
-          array('Citysnail_Settings','wp_citysnail_keywords_field'),//callback
-          'wp_citysnail_keywords',                   //page-slug
-          'wp_citysnail_keywords'          //section (parent settings-section uniqueID)
-        );
-      }
-    }
-    self::$current_field_index = 1;
+    add_settings_field(
+      'oil',                   //uniqueID - "param_1", etc.
+      'oil',                  //uniqueTitle -
+      array('Citysnail_Settings','wp_citysnail_keywords_field'),//callback
+      'wp_citysnail_keywords',                   //page-slug
+      'wp_citysnail_keywords'          //section (parent settings-section uniqueID)
+    );
 
     register_setting( 'wp_citysnail', 'wp_citysnail' );
     register_setting( 'wp_citysnail_keywords', 'wp_citysnail_keywords' );
@@ -71,24 +51,7 @@ class Citysnail_Settings {
   ////template 3 - settings section field - dynamically rendered <input/>
 
   static function wp_citysnail_keywords_field() {
-    $options = get_option('wp_citysnail_keywords');
-    //error_log(print_r($options));
-    //local namespace assignments based on global settings &/or database state
-    $divider = (self::$eq_label_toggle_index < count(self::$eq_label_toggle)-1) ?
-      "" : "<br/><br/><hr/>";
-    $field_name = self::$eq_label_toggle[self::$eq_label_toggle_index];
-    $this_field = $field_name . "_" . strval(self::$current_field_index);
-    $this_label = ucwords($field_name) . " " . strval(self::$current_field_index);
-    $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : "(not set)";
-    $value_tag = ($placeholder === "(not set)") ? "placeholder" : "value";
-    //reset globals - toggle label and increment pairing series as needed
-    self::$eq_label_toggle_index +=
-      (self::$eq_label_toggle_index < count(self::$eq_label_toggle)-1 ) ?
-      1 : -(count(self::$eq_label_toggle)-1);
-    self::$current_field_index += (self::$eq_label_toggle_index === 0) ?
-      1 : 0;
-    //make an <input/> with dynamic attributes
-    echo "<input type='text' name=wp_citysnail_keywords[{$this_field}] {$value_tag}='{$placeholder}'/>" . $divider;
+    echo "oil";
   }
 
   static function wp_citysnail_domain_field() {
@@ -106,7 +69,6 @@ class Citysnail_Settings {
     return "<input type='text' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
   }
 
-
   ////template 2 - after settings section title
 
   static function wp_citysnail_settings_section() {
@@ -115,7 +77,7 @@ class Citysnail_Settings {
 
 
   static function wp_citysnail_keywords_section() {
-    self::do_simple_dynamic_section('wp_citysnail_keywords',['citysnail-unset-all']);
+    self::do_sitemap_keywords_section('wp_citysnail_keywords',['citysnail_unset_all','citysnail_sitemap_nester']);
   }
 
   static function do_simple_dynamic_section($db_slug,$scripts) {
@@ -139,6 +101,45 @@ class Citysnail_Settings {
       </button>
     </div>
     <?php
+  }
+
+  static function do_sitemap_keywords_section($db_slug,$scripts) {
+    $options = get_option($db_slug);
+    $dropped = $options['drop'];
+    if ($dropped === "TRUE") {
+      error_log('got drop');
+      delete_option($db_slug);
+    } else {
+      error_log("drop=false");
+    }
+    $options = get_option('wp_citysnail');
+    $my_domain_name = (isset($options['domain']) && $options['domain'] != '') ?
+      $options['domain'] : false;
+    if ($my_domain_name) {
+      $my_protocol = 'https://';
+      $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$my_domain_name)) ?
+        $my_domain_name : $my_protocol . $my_domain_name;
+      $map_name = ($options['sitemap']) ? $options['sitemap'] : 'sitemap.xml';
+      $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
+      $map_list = Snail::parse_sitemap_dom($map_dom);
+      $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
+      $sitemap_snail = new Sitemap_Snail($sitemap_monster);
+    }
+    foreach ($scripts as $script) {
+      wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
+    }
+    ?>
+    <hr/>
+    <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
+      <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
+      <button id='drop_button' class='button-primary' style='border:1.5px solid red;'>
+        <?php _e("Delete All") ?>
+      </button>
+    </div>
+    <?php
+    foreach ($sitemap_monster->new_map as $page_url) {
+      echo $sitemap_snail->do_sitemap_item($page_url);
+    }
   }
 
 }

@@ -1,16 +1,17 @@
 <?php
 
+
 class Citysnail_Options {
 
   static function wp_citysnail_register_menu_page() {
       add_menu_page(
-          'WP Citysnail',                        // Page Title
-          'citysnail',                       // Menu Title
-          'manage_options',             // for Capabilities level of user with:
-          'wp_citysnail',                    // menu Slug(page)
-          array('Citysnail_Options','wp_citysnail_options_page'), // CB Function cb_equips_options_page()
-          'dashicons-editor-code',  // Menu Icon
-          20
+        'WP Citysnail',                        // Page Title
+        'citysnail',                       // Menu Title
+        'manage_options',             // for Capabilities level of user with:
+        'wp_citysnail',                    // menu Slug(page)
+        array('Citysnail_Options','wp_citysnail_options_page'), // CB Function cb_equips_options_page()
+        'dashicons-media-code',  // Menu Icon
+        20
       );
 
       add_submenu_page(
@@ -46,7 +47,6 @@ class Citysnail_Options {
   }
 
   static function wp_citysnail_keywords_page() {
-    global $eq_field_count;
     ?>
     <div class='form-wrap'>
       <h2>WP Citysnail - Keywords</h2>
