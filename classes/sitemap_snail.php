@@ -9,8 +9,7 @@ class Sitemap_Snail {
   }
 
   public function get_slug_arr($url) {
-    global $my_domain;
-    $uri = str_replace($my_domain,'',$url);
+    $uri = str_replace($this->sitemap_monster->domain,'',$url);
     $slug_arr = explode('/',$uri);
     if (substr($uri,0,1) == '/' && substr($uri,-1) =='/') {
       array_splice($slug_arr,0,1);

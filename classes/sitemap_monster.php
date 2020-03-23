@@ -11,7 +11,7 @@ class Sitemap_Monster {
   public $csv_str = '';
 
   function __construct($this_domain_str,$these_urls_arr) {
-    $this->domain =  $this_domain_str;
+    $this->domain = $this_domain_str;
     $this->old_map = $these_urls_arr;
     $this->old_page_arrs = $this->get_path_arrs();
     $this->branches = $this->get_branches();
