@@ -90,9 +90,11 @@ class Citysnail_Settings {
     } else {
       error_log("drop=false");
     }
+
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
     }
+
     ?>
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
@@ -126,10 +128,12 @@ class Citysnail_Settings {
       $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
       $sitemap_snail = new Sitemap_Snail($sitemap_monster);
     }
+    wp_register_style('yuckstyle', plugin_dir_url(__FILE__) . '../styles/' . 'yuckstyle' . '.css');
+    wp_enqueue_style('yuckstyle');
+    wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
     }
-    wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../css/' . 'yuckstyle' . '.css');
     ?>
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
