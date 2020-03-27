@@ -39,16 +39,3 @@ if ( !class_exists( 'Snail' ) ) {
 if ( !class_exists( 'Sitemap_Snail' ) ) {
   include_once 'classes/sitemap_snail.php';
 }
-/*
-function citysnail_admin_keywords_scripts($hook) {
-  
-  if (get_query_var('page', false)) {
-   $raw_query = get_query_var('page', false);
-   if ($raw_query === 'wp_citysnail_keywords') {
-
-   }
-  }
-}
-
-add_action('admin_enqueque_scripts','citysnail_admin_keywords_scripts');
-*/

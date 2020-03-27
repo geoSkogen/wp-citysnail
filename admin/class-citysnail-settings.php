@@ -35,8 +35,8 @@ class Citysnail_Settings {
     );
 
     add_settings_field(
-      'oil',                   //uniqueID - "param_1", etc.
-      'oil',                  //uniqueTitle -
+      'snail_modal',                   //uniqueID - "param_1", etc.
+      '_',                  //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_keywords_field'),//callback
       'wp_citysnail_keywords',                   //page-slug
       'wp_citysnail_keywords'          //section (parent settings-section uniqueID)
@@ -51,7 +51,23 @@ class Citysnail_Settings {
   ////template 3 - settings section field - dynamically rendered <input/>
 
   static function wp_citysnail_keywords_field() {
-    echo "oil";
+    $str = "";
+    $sections = ['title','title_vs_h1','h1','anchors','images'];
+    $report =   array(
+      'color' => 'red',
+      'flavor' => 'good'
+    );
+    $report_schema = json_encode($report);
+    $str .= '<div class="flexOuterCenter"><div id="relshell">';
+    $str .= '<div data-toggle="block" class="invis" id="snail_modal">';
+    $str .= '<div class="flexOuterEnd"><div id="close_modal">&times;</div></div>';
+    foreach ($sections as $section) {
+      $str .= "<h2>{$section}</h2>";
+      $str .= '<section id="' . $section . '" class="nodeReport"></section>';
+    }
+    $str .= '</div></div></div>';
+    $str .= '<div id="report_schema" class="invis">' . $report_schema . '</div>';
+    echo $str;
   }
 
   static function wp_citysnail_domain_field() {
@@ -72,13 +88,13 @@ class Citysnail_Settings {
   ////template 2 - after settings section title
 
   static function wp_citysnail_settings_section() {
-    self::do_simple_dynamic_section('wp_citysnail',['citysnail-unset-all']);
+    self::do_simple_dynamic_section('wp_citysnail',['unset_all']);
   }
 
 
   static function wp_citysnail_keywords_section() {
     self::do_sitemap_keywords_section('wp_citysnail_keywords',
-    ['citysnail_unset_all','citysnail_sitemap_nester']);
+    ['unset_all','sitemap_nester','modal_model']);
   }
 
   static function do_simple_dynamic_section($db_slug,$scripts) {
@@ -92,7 +108,7 @@ class Citysnail_Settings {
     }
 
     foreach ($scripts as $script) {
-      wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
+      wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
     }
 
     ?>
@@ -132,7 +148,7 @@ class Citysnail_Settings {
     wp_enqueue_style('yuckstyle');
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
     foreach ($scripts as $script) {
-      wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/' . $script . '.js');
+      wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
     }
     ?>
     <hr/>

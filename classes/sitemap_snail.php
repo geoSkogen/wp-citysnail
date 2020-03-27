@@ -47,9 +47,11 @@ class Sitemap_Snail {
     $str .= '<a href="' . $url . '" class="sitemap_link">';
     $str .= $url;
     $str .= '</a>';
+    /*
     $str .= '<input id="' .
       implode('_',$slug_arr) . '" class="invis" name="' .
       implode('_',$slug_arr) . '"/>';
+    */  
     $str .= '</div></div>';
     return $str;
   }
