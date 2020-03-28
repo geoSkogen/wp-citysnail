@@ -66,7 +66,6 @@ class Citysnail_Settings {
       $str .= '<section id="' . $section . '" class="nodeReport"></section>';
     }
     $str .= '</div></div></div>';
-    $str .= '<div id="report_schema" class="invis">' . $report_schema . '</div>';
     echo $str;
   }
 
@@ -143,6 +142,8 @@ class Citysnail_Settings {
       $map_list = Snail::parse_sitemap_dom($map_dom);
       $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
       $sitemap_snail = new Sitemap_Snail($sitemap_monster);
+
+      //$schema_string = '{"doman":"spaghetti"}';
     }
     wp_register_style('yuckstyle', plugin_dir_url(__FILE__) . '../styles/' . 'yuckstyle' . '.css');
     wp_enqueue_style('yuckstyle');
@@ -151,6 +152,7 @@ class Citysnail_Settings {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
     }
     ?>
+
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
       <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
@@ -162,6 +164,9 @@ class Citysnail_Settings {
     foreach ($sitemap_monster->new_map as $page_url) {
       echo $sitemap_snail->do_sitemap_item($page_url);
     }
+    $report_schema = array('domain' => $my_domain);
+    $schema_string = json_encode($report_schema);
+    echo '<div id="report_schema" class="invis">' . $schema_string . '</div>';
   }
 
 }

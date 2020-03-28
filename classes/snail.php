@@ -37,6 +37,7 @@ class Snail {
       $data['struct'][$url][0] : '__not_set__';
     $tag_list = ['title','h1','h2','h3','a','img'];
     $dom_objs = [];
+    $crawl_report = [];
 
     foreach ($tag_list as $tag_name) {
       $dom_objs[$tag_name] = ($dom->getElementsByTagName('title')) ?
@@ -58,11 +59,11 @@ class Snail {
     foreach ($dom_objs as $tag_name => $dom_obj) {
       switch ($tag_name) {
         case 'title' :
-          echo self::cross_crawl($dom_obj->item(0)->nodeValue,$keyword,[$tag_name],false);
-          break;
         case 'h1' :
-          echo self::cross_crawl($dom_obj->item(0)->nodeValue,$keyword,[$tag_name],false);
-          echo self::cross_crawl(
+          $crawl_report[$tag_name] = self::cross_crawl(
+            $dom_obj->item(0)->nodeValue,$keyword,[$tag_name],false
+          );
+          $crawl_report['title_v_h1'] = self::cross_crawl(
             $dom_obj->item(0)->nodeValue,
             $dom_objs['title']->item(0)->nodeValue,
             [$tag_name,'title'],
@@ -74,10 +75,10 @@ class Snail {
           echo self::h_crawl($dom_obj,$keyword,$tag_name);
           break;
         case 'img' :
-          echo self::img_crawl($dom_obj,$keyword);
+          $crawl_report['images'] = self::img_crawl($dom_obj,$keyword);
           break;
         case 'a' :
-          echo self::anchor_crawl($dom_obj,$keyword);
+          $crawl_report['anchors'] = self::anchor_crawl($dom_obj,$keyword);
           break;
         default :
       }
@@ -86,7 +87,7 @@ class Snail {
     echo '<br/>';
     echo '<hr/>';
     echo '<br/>';
-    return;
+    return $crawl_report;
   }
 
   public static function cross_crawl($node_value,$keyword,$element_names,$mode) {
@@ -178,6 +179,7 @@ class Snail {
   }
 
   public static function init_curl_crawl($domain,$page_path,$client_data) {
+    $crawl_report = [];
     $this_dom = array();
     $sitemap_dom = ($page_path)?
       self::curl_get_dom($domain . '/' . $page_path) :
@@ -185,8 +187,9 @@ class Snail {
     $resource_arr = self::parse_sitemap_dom($sitemap_dom);
     foreach( $resource_arr as $resource ) {
       $this_dom = self::curl_get_dom($resource);
-      self::spider_page_dom($this_dom,$client_data,$resource);
+      $crawl_report[$resource] = self::spider_page_dom($this_dom,$client_data,$resource);
     }
+    return $crawl_report;
   }
 
 }
