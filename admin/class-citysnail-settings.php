@@ -40,7 +40,7 @@ class Citysnail_Settings {
       'wp_citysnail',                   //page-slug
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
     );
-    
+
     add_settings_field(
       'structure',                   //uniqueID - "param_1", etc.
       'Site Structure Worksheet',                  //uniqueTitle -
