@@ -18,6 +18,13 @@ class Citysnail_Settings {
       'wp_citysnail_keywords'                         //page-slug
     );
 
+    add_settings_section(
+      'wp_citysnail_structure',                         //uniqueID
+      'Upload Your Site Structure Worksheet',        //Title
+      array('Citysnail_Settings','wp_citysnail_structure_section'),//CallBack Function
+      'wp_citysnail_structure'                         //page-slug
+    );
+
     add_settings_field(
       'domain',                   //uniqueID - "param_1", etc.
       'Domain',                  //uniqueTitle -
@@ -33,13 +40,22 @@ class Citysnail_Settings {
       'wp_citysnail',                   //page-slug
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
     );
-
+    /*
     add_settings_field(
       'structure',                   //uniqueID - "param_1", etc.
       'Site Structure',                  //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_structure_field'),//callback
       'wp_citysnail',                   //page-slug
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
+    );
+    */
+
+    add_settings_field(
+      'structure',                   //uniqueID - "param_1", etc.
+      'Site Structure Worksheet',                  //uniqueTitle -
+      array('Citysnail_Settings','wp_citysnail_structure_field'),//callback
+      'wp_citysnail_structure',                   //page-slug
+      'wp_citysnail_structure'          //section (parent settings-section uniqueID)
     );
 
     add_settings_field(
@@ -51,6 +67,7 @@ class Citysnail_Settings {
     );
 
     register_setting( 'wp_citysnail', 'wp_citysnail' );
+    register_setting( 'wp_citysnail_structure', 'wp_citysnail_structure' );
     register_setting( 'wp_citysnail_keywords', 'wp_citysnail_keywords' );
   }
 
@@ -86,11 +103,19 @@ class Citysnail_Settings {
   }
 
   static function wp_citysnail_structure_field() {
-    $options = get_option('wp_citysnail');
-    $this_path = $options['structure_path'];
+    $options = get_option('wp_citysnail_structure');
+    /*
+    $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
+    $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
+    */
+    $this_path = ( $options['structure_path'] ) ?
+      $options['structure_path'] : '(not set)';
+    $this_file = ( $options['structure_file'] ) ?
+      $options['structure_file'] : '(not set)';
     $str = "<div><b>upload your site structure worksheet:<b><div><br/>";
-    $str .= "<input type='text' name='wp_citysnail[structure_path]' value='{$this_path}'/>";
-    $str .= "&nbsp;&nbsp;<inut type='file' name='wp_citysnail[structure]'/>";
+    $str .= "<input type='text' id='structure_path' name='wp_citysnail[structure_path]' value='{$this_path}'/>";
+    $str .= "&nbsp;&nbsp;";
+    $str .= "<input id='structure_file' type='file' name='wp_citysnail[structure_file]' value='{$this_file }'/>";
     echo $str;
     if ( ! function_exists( 'wp_handle_upload' ) ) {
       require_once( ABSPATH . 'wp-admin/includes/file.php' );
@@ -112,7 +137,8 @@ class Citysnail_Settings {
   }
 
   static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
-    $options = get_option($db_slug);
+    $options = ( get_option($db_slug) ) ? get_option($db_slug) : $db_slug;
+    //$placeholder = Snail_Tail::try_option_key($options,$this_field,$fallback_str);
     $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : $fallback_str;
     $value_tag = ($placeholder === $fallback_str) ? "placeholder" : "value";
     return "<input type='text' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
@@ -125,9 +151,17 @@ class Citysnail_Settings {
   }
 
 
+    static function wp_citysnail_structure_section() {
+      self::do_simple_dynamic_section('wp_citysnail_structure',
+        ['unset_all','upload_helper']
+      );
+    }
+
+
   static function wp_citysnail_keywords_section() {
     self::do_sitemap_keywords_section('wp_citysnail_keywords',
-    ['unset_all','sitemap_nester','modal_model']);
+      ['unset_all','sitemap_nester','modal_model']
+    );
   }
 
   static function do_simple_dynamic_section($db_slug,$scripts) {

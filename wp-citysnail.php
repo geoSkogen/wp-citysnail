@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name:  wp-citysnail
-Description:  Several New Acronyms Involving Language
-Version:      2020.03.18
+Description:  SEO cargo, citystyle
+Version:      2020.03.28
 Author:       Joseph Scoggins
 Author URI:   https://joseph-scoggins.com
 Text Domain:  wp_citysnail
@@ -38,4 +38,8 @@ if ( !class_exists( 'Snail' ) ) {
 
 if ( !class_exists( 'Sitemap_Snail' ) ) {
   include_once 'classes/sitemap_snail.php';
+}
+
+if ( !class_exists( 'Snail_Tail' ) ) {
+  include_once 'util/snail_tail.php';
 }

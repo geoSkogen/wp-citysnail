@@ -16,6 +16,15 @@ class Citysnail_Options {
 
       add_submenu_page(
         'wp_citysnail',                         //parent menu
+        'WP Citysnail Structure',                // Page Title
+        'citysnail structure',               // Menu Title
+        'manage_options',             // for Capabilities level of user with:
+        'wp_citysnail_structure',             // menu Slug(page)
+        array('Citysnail_Options','wp_citysnail_structure_page')// CB Function plugin_options_page()
+    );
+
+      add_submenu_page(
+        'wp_citysnail',                         //parent menu
         'WP Citysnail Keywords',                // Page Title
         'citysnail keywords',               // Menu Title
         'manage_options',             // for Capabilities level of user with:
@@ -27,18 +36,22 @@ class Citysnail_Options {
   //// template 1 - <form> body
 
   static function wp_citysnail_options_page() {
-    self::do_simple_dynamic_page('wp_citysnail');
+    self::do_simple_dynamic_page('wp_citysnail','options');
   }
 
   static function wp_citysnail_keywords_page() {
-    self::do_simple_dynamic_page('wp_citysnail_keywords');
+    self::do_simple_dynamic_page('wp_citysnail_keywords','options');
   }
 
-  static function do_simple_dynamic_page($db_slug) {
+  static function wp_citysnail_structure_page() {
+    self::do_simple_dynamic_page('wp_citysnail_structure','admin-ajax');
+  }
+
+  static function do_simple_dynamic_page($db_slug,$post_action) {
     ?>
     <div class='form-wrap'>
       <h2>WP Citysnail</h2>
-      <form method='post' action='options.php' id='wp-citysnail-form'>
+      <form method='post' action='<?php echo $post_action; ?>.php' id='<?php echo $db_slug; ?>-form'>
         <?php
           settings_fields( $db_slug );
           do_settings_sections( $db_slug );
