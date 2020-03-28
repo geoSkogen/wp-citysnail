@@ -118,7 +118,8 @@ a:link, a:active, a:hover, a:visited {
 }
 
 button,
-input[type="submit"] {
+input[type="submit"],
+input[type="file"] {
   color: white;
   background-color: steelblue;
   padding: 0.75em;

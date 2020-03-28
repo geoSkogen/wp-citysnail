@@ -35,8 +35,16 @@ class Citysnail_Settings {
     );
 
     add_settings_field(
+      'structure',                   //uniqueID - "param_1", etc.
+      'Site Structure',                  //uniqueTitle -
+      array('Citysnail_Settings','wp_citysnail_structure_field'),//callback
+      'wp_citysnail',                   //page-slug
+      'wp_citysnail_settings'          //section (parent settings-section uniqueID)
+    );
+
+    add_settings_field(
       'snail_modal',                   //uniqueID - "param_1", etc.
-      '_',                  //uniqueTitle -
+      '&nbsp',                  //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_keywords_field'),//callback
       'wp_citysnail_keywords',                   //page-slug
       'wp_citysnail_keywords'          //section (parent settings-section uniqueID)
@@ -75,6 +83,32 @@ class Citysnail_Settings {
 
   static function wp_citysnail_sitemap_field() {
     echo self::do_simple_dynamic_input('wp_citysnail','sitemap','(not set)');
+  }
+
+  static function wp_citysnail_structure_field() {
+    $options = get_option('wp_citysnail');
+    $this_path = $options['structure_path'];
+    $str = "<div><b>upload your site structure worksheet:<b><div><br/>";
+    $str .= "<input type='text' name='wp_citysnail[structure_path]' value='{$this_path}'/>";
+    $str .= "&nbsp;&nbsp;<inut type='file' name='wp_citysnail[structure]'/>";
+    echo $str;
+    if ( ! function_exists( 'wp_handle_upload' ) ) {
+      require_once( ABSPATH . 'wp-admin/includes/file.php' );
+    }
+    /*
+    $uploadedfile = $_FILES['file'];
+
+    $upload_overrides = array( 'test_form' => false );
+
+    $movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+
+    if ( $movefile && ! isset( $movefile['error'] ) ) {
+      echo "File is valid, and was successfully uploaded.\n";
+      var_dump( $movefile );
+    } else {
+      echo $movefile['error'];
+    }
+    */
   }
 
   static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
