@@ -43,3 +43,7 @@ if ( !class_exists( 'Sitemap_Snail' ) ) {
 if ( !class_exists( 'Snail_Tail' ) ) {
   include_once 'util/snail_tail.php';
 }
+
+if ( !class_exists( 'Snail_Query' ) ) {
+  include_once 'util/snail_query.php';
+}

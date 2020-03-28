@@ -40,16 +40,7 @@ class Citysnail_Settings {
       'wp_citysnail',                   //page-slug
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
     );
-    /*
-    add_settings_field(
-      'structure',                   //uniqueID - "param_1", etc.
-      'Site Structure',                  //uniqueTitle -
-      array('Citysnail_Settings','wp_citysnail_structure_field'),//callback
-      'wp_citysnail',                   //page-slug
-      'wp_citysnail_settings'          //section (parent settings-section uniqueID)
-    );
-    */
-
+    
     add_settings_field(
       'structure',                   //uniqueID - "param_1", etc.
       'Site Structure Worksheet',                  //uniqueTitle -
@@ -109,31 +100,18 @@ class Citysnail_Settings {
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
     */
     $this_path = ( $options['structure_path'] ) ?
-      $options['structure_path'] : '(not set)';
+      $options['structure_path'] : '';
     $this_file = ( $options['structure_file'] ) ?
-      $options['structure_file'] : '(not set)';
-    $str = "<div><b>upload your site structure worksheet:<b><div><br/>";
-    $str .= "<input type='text' id='structure_path' name='wp_citysnail[structure_path]' value='{$this_path}'/>";
-    $str .= "&nbsp;&nbsp;";
-    $str .= "<input id='structure_file' type='file' name='wp_citysnail[structure_file]' value='{$this_file }'/>";
+      $options['structure_file'] : 'upload a file';
+    $value_tag = (!$this_path) ? 'placeholder' : 'value';
+    $placeholder = (!$this_path) ? '(not set)' : $this_path;
+    $is_set = (!$this_path) ? '_unset' : '';
+    $str = "<div><b>upload your site structure worksheet:</b></div><br/>";
+    $str .= "<input type='text' class='zeroTest' id='structure_path' name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
+    $str .= "<button class='snail_admin' id='structure_button{$is_set}'><b>{$this_file}</b>";
+    $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure[structure_file]' value='{$this_file }'/>";
+    $str .= "</button>";
     echo $str;
-    if ( ! function_exists( 'wp_handle_upload' ) ) {
-      require_once( ABSPATH . 'wp-admin/includes/file.php' );
-    }
-    /*
-    $uploadedfile = $_FILES['file'];
-
-    $upload_overrides = array( 'test_form' => false );
-
-    $movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
-
-    if ( $movefile && ! isset( $movefile['error'] ) ) {
-      echo "File is valid, and was successfully uploaded.\n";
-      var_dump( $movefile );
-    } else {
-      echo $movefile['error'];
-    }
-    */
   }
 
   static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
@@ -141,7 +119,7 @@ class Citysnail_Settings {
     //$placeholder = Snail_Tail::try_option_key($options,$this_field,$fallback_str);
     $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : $fallback_str;
     $value_tag = ($placeholder === $fallback_str) ? "placeholder" : "value";
-    return "<input type='text' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
+    return "<input type='text' class='zeroTest' id='{$this_field}' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
   }
 
   ////template 2 - after settings section title
@@ -181,8 +159,8 @@ class Citysnail_Settings {
     ?>
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
-      <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
-      <button id='drop_button' class='button-primary' style='border:1.5px solid red;'>
+      <input name='submit' type='submit' id='submit' class='snail_admin' value='<?php _e("Save Changes") ?>' />
+      <button id='drop_button' class='snail_admin' style='border:1.5px solid red;'>
         <?php _e("Delete All") ?>
       </button>
     </div>
@@ -213,8 +191,7 @@ class Citysnail_Settings {
 
       //$schema_string = '{"doman":"spaghetti"}';
     }
-    wp_register_style('yuckstyle', plugin_dir_url(__FILE__) . '../styles/' . 'yuckstyle' . '.css');
-    wp_enqueue_style('yuckstyle');
+
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
@@ -223,8 +200,8 @@ class Citysnail_Settings {
 
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
-      <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
-      <button id='drop_button' class='button-primary' style='border:1.5px solid red;'>
+      <input name='submit' type='submit' id='submit' class='snail_admin' value='<?php _e("Save Changes") ?>' />
+      <button id='drop_button' class='snail_admin' style='border:1.5px solid red;'>
         <?php _e("Delete All") ?>
       </button>
     </div>

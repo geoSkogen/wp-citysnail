@@ -48,9 +48,11 @@ class Citysnail_Options {
   }
 
   static function do_simple_dynamic_page($db_slug,$post_action) {
+    wp_register_style('yuckstyle', plugin_dir_url(__FILE__) . '../styles/' . 'yuckstyle' . '.css');
+    wp_enqueue_style('yuckstyle');
     ?>
     <div class='form-wrap'>
-      <h2>WP Citysnail</h2>
+      <h3>WP Citysnail</h3>
       <form method='post' action='<?php echo $post_action; ?>.php' id='<?php echo $db_slug; ?>-form'>
         <?php
           settings_fields( $db_slug );
@@ -60,7 +62,7 @@ class Citysnail_Options {
           <input class='invis-input' id='drop_field' name=<?php echo "{$db_slug}[drop]"; ?> type='text'/>
         </div>
         <p class='submit'>
-          <input name='submit' type='submit' id='submit' class='button-primary' value='<?php _e("Save Changes") ?>' />
+          <input name='submit' type='submit' id='submit' class='snail_admin' value='<?php _e("Save Changes") ?>' />
         </p>
       </form>
     </div>
