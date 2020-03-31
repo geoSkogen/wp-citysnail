@@ -36,15 +36,16 @@ class Citysnail_Options {
   //// template 1 - <form> body
 
   static function wp_citysnail_options_page() {
-    self::do_simple_dynamic_page('wp_citysnail','options');
+    self::do_simple_dynamic_page('wp_citysnail','options.php');
   }
 
   static function wp_citysnail_keywords_page() {
-    self::do_simple_dynamic_page('wp_citysnail_keywords','options');
+    self::do_simple_dynamic_page('wp_citysnail_keywords','options.php');
   }
 
   static function wp_citysnail_structure_page() {
-    self::do_simple_dynamic_page('wp_citysnail_structure','admin-ajax');
+    $action = admin_url( 'admin-ajax.php' );
+    self::do_simple_dynamic_page('wp_citysnail_structure',$action);
   }
 
   static function do_simple_dynamic_page($db_slug,$post_action) {
@@ -53,7 +54,7 @@ class Citysnail_Options {
     ?>
     <div class='form-wrap'>
       <h3>WP Citysnail</h3>
-      <form method='post' action='<?php echo $post_action; ?>.php' id='<?php echo $db_slug; ?>-form'>
+      <form method='post' action='<?php echo $post_action; ?>' id='<?php echo $db_slug; ?>-form' enctype='multipart/form-data'>
         <?php
           settings_fields( $db_slug );
           do_settings_sections( $db_slug );

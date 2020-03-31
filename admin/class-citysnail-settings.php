@@ -95,10 +95,13 @@ class Citysnail_Settings {
 
   static function wp_citysnail_structure_field() {
     $options = get_option('wp_citysnail_structure');
+    $options_home = get_option('wp_citysnail');
     /*
     $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
     */
+    $this_domain = ( $options_home['domain'] ) ?
+      $options_home['domain'] : '';
     $this_path = ( $options['structure_path'] ) ?
       $options['structure_path'] : '';
     $this_file = ( $options['structure_file'] ) ?
@@ -107,10 +110,15 @@ class Citysnail_Settings {
     $placeholder = (!$this_path) ? '(not set)' : $this_path;
     $is_set = (!$this_path) ? '_unset' : '';
     $str = "<div><b>upload your site structure worksheet:</b></div><br/>";
+    $str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
+    $str .= "<div class='fexOuterCenter'>";
     $str .= "<input type='text' class='zeroTest' id='structure_path' name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
-    $str .= "<button class='snail_admin' id='structure_button{$is_set}'><b>{$this_file}</b>";
-    $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure[structure_file]' value='{$this_file }'/>";
-    $str .= "</button>";
+    $str .= "<div class='snail_admin' id='structure_button{$is_set}'><b>{$this_file}</b>";
+    $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure_file' value='{$this_file}'/>";
+    $str .= "</div></div>";
+    $str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
+    $str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
+    $str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     echo $str;
   }
 
