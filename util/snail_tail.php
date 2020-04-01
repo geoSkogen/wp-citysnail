@@ -38,6 +38,10 @@ class Snail_Tail {
     }
     return $result;
   }
+
+  public function formless_submit($tables,$keys) {
+    
+  }
 }
 
 ?>

@@ -195,3 +195,35 @@ input.zeroTestModal {
 .fas {
   cursor: pointer;
 }
+
+.monster_row:hover {
+  background-color: lightsteelblue;
+  color: white
+}
+
+.drop_me {
+  font-size: 30px !important;
+  font-weight: 600;
+  cursor: pointer;
+  color: black;
+}
+
+.drop_me:hover {
+  font-weight: 800;
+  cursor: pointer;
+  color: red;
+}
+
+.monster_row {
+  padding: 0 0 !important;
+  margin: 0 0 !important;
+  line-height: 1 !important;
+  max-height: 1em !important;
+}
+
+.monster_slug {
+  padding: 0 0 0 1em !important;
+  margin: 0 0 !important;
+  line-height: 1 !important;
+  max-height: 1em !important;
+}

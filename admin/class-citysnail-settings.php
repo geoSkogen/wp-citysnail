@@ -96,14 +96,34 @@ class Citysnail_Settings {
   static function wp_citysnail_structure_field() {
     $options = get_option('wp_citysnail_structure');
     $options_home = get_option('wp_citysnail');
+    $options_keywords = get_option('wp_citysnail_keywords');
     /*
     $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
     */
-    $this_domain = ( $options_home['domain'] ) ?
-      $options_home['domain'] : '';
     $this_path = ( $options['structure_path'] ) ?
       $options['structure_path'] : '';
+    $this_domain = ( $options_home['domain'] ) ?
+      $options_home['domain'] : '';
+    $my_domain = '';
+    $resources = (
+      $options_keywords['resources'] &&
+      is_array($options_keywords['resources']) &&
+      count($options_keywords['resources'])
+      ) ?
+      $options_keywords['resources'] : '';
+
+    if ($options_keywords['domain']) {
+      $my_domain = $options_keywords['domain'];
+    } else if ($this_domain) {
+      $my_protocol = 'https://';
+      $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$this_domain)) ?
+        $this_domain : $my_protocol . $this_domain;
+    }
+
+    $sitemap_monster = ($resources && $my_domain) ?
+      new Sitemap_Monster($my_domain,$resources) : false;
+
     $this_file = (!$this_path) ? 'upload a file' :
       str_replace(
         site_url(),
@@ -119,6 +139,7 @@ class Citysnail_Settings {
     $sub = (!$this_path) ? '' : '<br/><span>click to change file:</span>';
     $button_is_set = '_unset';
     $input_is_set = (!$this_path) ? '' : ' slight';
+
     $str = "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
     $str .= "<div class='fexOuterCenter'>";
@@ -131,6 +152,7 @@ class Citysnail_Settings {
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     echo $str;
+    echo $sitemap_monster->html_table;
   }
 
   static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
@@ -141,6 +163,10 @@ class Citysnail_Settings {
     return "<input type='text' class='zeroTest' id='{$this_field}' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
   }
 
+  public static function do_sitemap_structure_table() {
+    return "[sitemap_table]";
+
+  }
   ////template 2 - after settings section title
 
   static function wp_citysnail_settings_section() {
@@ -232,11 +258,17 @@ class Citysnail_Settings {
       </button>
     </div>
     <?php
+    $report_schema = array(
+      'domain' => $my_domain,
+      'resources' => array(),
+      'report' => ''
+    );
     foreach ($sitemap_monster->new_map as $page_url) {
+      $report_schema['resources'][] = $page_url;
       echo $sitemap_snail->do_sitemap_item($page_url);
     }
-    $report_schema = array('domain' => $my_domain);
     $schema_string = json_encode($report_schema);
+    update_option('wp_citysnail_keywords',$report_schema);
     echo '<div id="report_schema" class="invis">' . $schema_string . '</div>';
   }
 

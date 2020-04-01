@@ -9,6 +9,7 @@ class Sitemap_Monster {
   public $new_page_arrs = [];
   public $new_map = [];
   public $csv_str = '';
+  public $html_table = '';
 
   function __construct($this_domain_str,$these_urls_arr) {
     $this->domain = $this_domain_str;
@@ -18,6 +19,7 @@ class Sitemap_Monster {
     $this->get_nested_page_arr();
     $this->new_map = $this->urls_from_arrays();
     $this->csv_str = $this->get_csv_nest();
+    $this->html_table = $this->get_html_table();
   }
 
   public function get_path_arrs() {
@@ -108,10 +110,26 @@ class Sitemap_Monster {
     return $csv_str;
   }
 
+  public function get_html_table() {
+    $nest_index = -1;
+    $slug = '';
+    $line = '';
+    $html_str = '<table>';
+    $html_str .= $this->get_html_table_row(0,'/',count($this->branches));
+    foreach($this->new_page_arrs as $slug_arr) {
+      $nest_index = count($slug_arr)-1;
+      $slug =  '/' . $slug_arr[$nest_index] . '/';
+      $line = $this->get_html_table_row($nest_index,$slug,count($this->branches));
+      $html_str .= $line;
+    }
+    $html_str .= '</table>';
+    return $html_str;
+  }
+
   public function repeat_me($str,$int) {
     $result = "";
     for ($i = 0; $i < $int; $i++) {
-      $result .= ",";
+      $result .= $str;
     }
     return $result;
   }
@@ -121,6 +139,15 @@ class Sitemap_Monster {
     $str .= $arg;
     $str .= $this->repeat_me(',', ($range-$depth-1) );
     $str .= "\r\n";
+    return $str;
+  }
+
+  public function get_html_table_row($depth,$arg,$range) {
+    $str = '<tr class="monster_row"><td class="short_cell drop_me">&times</td>';
+    $str .= $this->repeat_me('<td></td>',$depth);
+    $str .= '<td class="monster_slug">' . $arg . '</td>';
+    $str .= $this->repeat_me('<td></td>', ($range-$depth-1) );
+    $str .= '<input class="invis" type="text" name="wp_citysnail_structure[' . $arg . ']"/></tr>';
     return $str;
   }
 
