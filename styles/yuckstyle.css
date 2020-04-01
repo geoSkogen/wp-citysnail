@@ -57,6 +57,10 @@ input.zeroTestModal {
   font-size: 16px;
 }
 
+.slight {
+  opacity: 0.33;
+}
+
 h1.h_one {
   font-size: 72px;
   opacity: 0.15;

@@ -47,14 +47,16 @@ if ( !class_exists( 'Snail_Tail' ) ) {
 if ( !class_exists( 'Snail_Query' ) ) {
   include_once 'util/snail_query.php';
 }
-
+/*
 if ( !class_exists( 'Snail_File' ) ) {
   include_once 'util/snail_file.php';
 }
-
+*/
+/*
 add_action( 'wp_ajax_nopriv_citysnail_submit_structure', 'csv_upload_handler' );
 add_action( 'wp_ajax_citysnail_submit_structure', 'csv_upload_handler' );
-
+*/
+/*
 function csv_upload_handler() {
 
   $post_data = array(
@@ -100,3 +102,4 @@ function csv_upload_handler() {
 
   die();
 }
+*/

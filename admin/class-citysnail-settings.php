@@ -104,21 +104,32 @@ class Citysnail_Settings {
       $options_home['domain'] : '';
     $this_path = ( $options['structure_path'] ) ?
       $options['structure_path'] : '';
-    $this_file = ( $options['structure_file'] ) ?
-      $options['structure_file'] : 'upload a file';
+    $this_file = (!$this_path) ? 'upload a file' :
+      str_replace(
+        site_url(),
+        '',
+        preg_replace(
+          '/\/wp-content\/uploads\/[0-9]{4}\/[0-9]{2}\//',
+          '',
+          $this_path
+        )
+      );
     $value_tag = (!$this_path) ? 'placeholder' : 'value';
     $placeholder = (!$this_path) ? '(not set)' : $this_path;
-    $is_set = (!$this_path) ? '_unset' : '';
+    $sub = (!$this_path) ? '' : '<br/><span>click to change file:</span>';
+    $button_is_set = '_unset';
+    $input_is_set = (!$this_path) ? '' : ' slight';
     $str = "<div><b>upload your site structure worksheet:</b></div><br/>";
-    $str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
+    //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
     $str .= "<div class='fexOuterCenter'>";
-    $str .= "<input type='text' class='zeroTest' id='structure_path' name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
-    $str .= "<div class='snail_admin' id='structure_button{$is_set}'><b>{$this_file}</b>";
-    $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure_file' value='{$this_file}'/>";
+    $str .= "<input type='text' class='zeroTest{$input_is_set}' id='structure_path' name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
+    $str .= $sub;
+    $str .= "<div class='snail_admin' id='structure_button{$button_is_set}'><b>{$this_file}</b>";
+    $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
-    $str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
-    $str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
-    $str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
+    //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
+    //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
+    //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     echo $str;
   }
 
@@ -137,11 +148,18 @@ class Citysnail_Settings {
   }
 
 
-    static function wp_citysnail_structure_section() {
-      self::do_simple_dynamic_section('wp_citysnail_structure',
-        ['unset_all','upload_helper']
-      );
-    }
+  static function wp_citysnail_structure_section() {
+    self::do_simple_dynamic_section('wp_citysnail_structure',
+      ['unset_all','upload_helper']
+    );
+    wp_enqueue_media();
+    wp_register_script(
+      'citysnail_media_uploader_csv',
+      plugins_url('../lib/citysnail_media_uploader_csv.js', __FILE__),
+      array('jquery')
+    );
+    wp_enqueue_script('citysnail_media_uploader_csv');
+  }
 
 
   static function wp_citysnail_keywords_section() {

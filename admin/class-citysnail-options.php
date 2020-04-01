@@ -44,8 +44,8 @@ class Citysnail_Options {
   }
 
   static function wp_citysnail_structure_page() {
-    $action = admin_url( 'admin-ajax.php' );
-    self::do_simple_dynamic_page('wp_citysnail_structure',$action);
+    //$action = admin_url( 'admin-ajax.php' );
+    self::do_simple_dynamic_page('wp_citysnail_structure','options.php');
   }
 
   static function do_simple_dynamic_page($db_slug,$post_action) {
