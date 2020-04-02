@@ -112,6 +112,12 @@ class Citysnail_Settings {
       count($options_keywords['resources'])
       ) ?
       $options_keywords['resources'] : '';
+    $my_pages = (
+      $options['my_pages'] &&
+      is_array($options['my_pages']) &&
+      count(array_keys($options['my_pages']))
+      ) ?
+      $options['my_pages'] : '';
 
     if ($options_keywords['domain']) {
       $my_domain = $options_keywords['domain'];
@@ -134,6 +140,9 @@ class Citysnail_Settings {
           $this_path
         )
       );
+
+    $my_pages = (is_array($resources)) ? join(',',$resources) : '';
+
     $value_tag = (!$this_path) ? 'placeholder' : 'value';
     $placeholder = (!$this_path) ? '(not set)' : $this_path;
     $sub = (!$this_path) ? '' : '<br/><span>click to change file:</span>';
@@ -148,11 +157,14 @@ class Citysnail_Settings {
     $str .= "<div class='snail_admin' id='structure_button{$button_is_set}'><b>{$this_file}</b>";
     $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
+    $str .= "<input type='text' class='invis' id='my_pages' name='wp_citysnail_structure[my_pages]' value={$my_pages} />";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     echo $str;
-    echo $sitemap_monster->html_table;
+    if ($sitemap_monster) {
+      echo $sitemap_monster->html_table;
+    }
   }
 
   static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
@@ -176,7 +188,7 @@ class Citysnail_Settings {
 
   static function wp_citysnail_structure_section() {
     self::do_simple_dynamic_section('wp_citysnail_structure',
-      ['unset_all','upload_helper']
+      ['unset_all','upload_helper','structure_helper']
     );
     wp_enqueue_media();
     wp_register_script(

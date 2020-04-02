@@ -205,7 +205,7 @@ input.zeroTestModal {
   font-size: 30px !important;
   font-weight: 600;
   cursor: pointer;
-  color: black;
+  color: #f1f1f1;
 }
 
 .drop_me:hover {
