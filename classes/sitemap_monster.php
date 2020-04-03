@@ -147,7 +147,9 @@ class Sitemap_Monster {
     $str .= $this->repeat_me('<td></td>',$depth);
     $str .= '<td class="monster_slug">' . $arg . '</td>';
     $str .= $this->repeat_me('<td></td>', ($range-$depth-1) );
-    $str .= '<input class="monster_key invis" data-toggle="none,block" type="text" name="' . $arg . '"/>';
+    $str .= '<td class="monster_key invis" data-toggle="block,invis">';
+    $str .= '<input class="zeroTest monster_field" type="text" name="' . $arg . '"/>';
+    $str .= '</td>';
     $str .= '</tr>';
     return $str;
   }

@@ -227,3 +227,14 @@ input.zeroTestModal {
   line-height: 1 !important;
   max-height: 1em !important;
 }
+
+.monster_key {
+  position: relative !important;
+}
+
+.monster_field {
+  position: absolute;
+  left: -3000%;
+  top: -5%;
+  width: 380px;
+}

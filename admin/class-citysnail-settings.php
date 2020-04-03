@@ -252,8 +252,6 @@ class Citysnail_Settings {
       $map_list = Snail::parse_sitemap_dom($map_dom);
       $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
       $sitemap_snail = new Sitemap_Snail($sitemap_monster);
-
-      //$schema_string = '{"doman":"spaghetti"}';
     }
 
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
