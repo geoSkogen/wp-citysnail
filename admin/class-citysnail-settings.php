@@ -3,7 +3,7 @@
 class Citysnail_Settings {
 
   public static function do_field_title_buttons() {
-    $str = '<hr/>';
+    $str = '';
     $str .= '<div style="display:flex;flex-flow:row wrap;justify-content:center;">';
     $str .= '<input name="submit" type="submit" id="submit" class="snail_admin" value="Save Changes"/>';
     $str .= '<button id="drop_button" class="snail_admin" style="border:1.5px solid red;">Delete All</button>';
@@ -13,9 +13,9 @@ class Citysnail_Settings {
 
   public static function do_structure_field_title() {
     $str = '<br/>';
-    $str .= '<ul><li>Upload a formatted CSV</li></ul>';
-    $str .= '<div style="text-indent:4.5em;">&mdash;or&mdash;</div>';
-    $str .= '<ul><li>Use this table tool <br/>&nbsp;&nbsp;to create one &mdash;<span class="bigger">»<span></li></ul>';
+    $str .= '<ul><li>Upload a formatted CSV</li>';
+    $str .= '<li style="text-indent:4.5em;padding-bottom:0;margin-bottom:0;">&ndash; or &ndash;</li>';
+    $str .= '<li>Create one here <sub class="bigger">&nbsp;»</sub><sub class="bigger">&nbsp;»</sub></li></ul>';
     return $str;
   }
 
@@ -37,7 +37,7 @@ class Citysnail_Settings {
 
     add_settings_section(
       'wp_citysnail_structure',                         //uniqueID
-      'Upload or Create Your Site Structure Worksheet',        //Title
+      'Upload or Create Your Site Structure Worksheet<hr/>',        //Title
       array('Citysnail_Settings','wp_citysnail_structure_section'),//CallBack Function
       'wp_citysnail_structure'                         //page-slug
     );
