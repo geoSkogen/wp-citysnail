@@ -2,6 +2,23 @@
 
 class Citysnail_Settings {
 
+  public static function do_field_title_buttons() {
+    $str = '<hr/>';
+    $str .= '<div style="display:flex;flex-flow:row wrap;justify-content:center;">';
+    $str .= '<input name="submit" type="submit" id="submit" class="snail_admin" value="Save Changes"/>';
+    $str .= '<button id="drop_button" class="snail_admin" style="border:1.5px solid red;">Delete All</button>';
+    $str .= '</div>';
+    return $str;
+  }
+
+  public static function do_structure_field_title() {
+    $str = '<br/>';
+    $str .= '<ul><li>Upload a formatted CSV</li></ul>';
+    $str .= '<div style="text-indent:4.5em;">&mdash;or&mdash;</div>';
+    $str .= '<ul><li>Use this table tool <br/>&nbsp;&nbsp;to create one &mdash;<span class="bigger">»<span></li></ul>';
+    return $str;
+  }
+
   public static function wp_citysnail_settings_api_init() {
 
     add_settings_section(
@@ -20,7 +37,7 @@ class Citysnail_Settings {
 
     add_settings_section(
       'wp_citysnail_structure',                         //uniqueID
-      'Upload Your Site Structure Worksheet',        //Title
+      'Upload or Create Your Site Structure Worksheet',        //Title
       array('Citysnail_Settings','wp_citysnail_structure_section'),//CallBack Function
       'wp_citysnail_structure'                         //page-slug
     );
@@ -43,7 +60,7 @@ class Citysnail_Settings {
 
     add_settings_field(
       'structure',                   //uniqueID - "param_1", etc.
-      'Site Structure Worksheet',                  //uniqueTitle -
+      'Site Structure Worksheet:' . self:: do_structure_field_title() . self::do_field_title_buttons(),               //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_structure_field'),//callback
       'wp_citysnail_structure',                   //page-slug
       'wp_citysnail_structure'          //section (parent settings-section uniqueID)
@@ -145,19 +162,20 @@ class Citysnail_Settings {
 
     $value_tag = (!$this_path) ? 'placeholder' : 'value';
     $placeholder = (!$this_path) ? '(not set)' : $this_path;
-    $sub = (!$this_path) ? '' : '<br/><span>click to change file:</span>';
+    $sub = (!$this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
     $button_is_set = '_unset';
     $input_is_set = (!$this_path) ? '' : ' slight';
 
-    $str = "<div><b>upload your site structure worksheet:</b></div><br/>";
+    $str = "";
+    //$str .= "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
-    $str .= "<div class='fexOuterCenter'>";
+    $str .= "<div class='flexOuterStart'>";
     $str .= "<input type='text' class='zeroTest{$input_is_set}' id='structure_path' name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
     $str .= $sub;
     $str .= "<div class='snail_admin' id='structure_button{$button_is_set}'><b>{$this_file}</b>";
-    $str .= "<input id='structure_file' type='file' name='wp_citysnail_structure[structure_file]'/>";
+    $str .= "<input id='structure_file' type='file' class='citysnail' name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
-    $str .= "<input type='text' class='invis' id='my_pages' name='wp_citysnail_structure[my_pages]' value={$my_pages} />";
+    $str .= "<input type='text' class='citysnail invis' id='my_pages' name='wp_citysnail_structure[my_pages]' value={$my_pages} />";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
@@ -172,7 +190,7 @@ class Citysnail_Settings {
     //$placeholder = Snail_Tail::try_option_key($options,$this_field,$fallback_str);
     $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : $fallback_str;
     $value_tag = ($placeholder === $fallback_str) ? "placeholder" : "value";
-    return "<input type='text' class='zeroTest' id='{$this_field}' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
+    return "<input type='text' class='citysnail zeroTest' id='{$this_field}' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
   }
 
   public static function do_sitemap_structure_table() {
@@ -219,16 +237,6 @@ class Citysnail_Settings {
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
     }
-
-    ?>
-    <hr/>
-    <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
-      <input name='submit' type='submit' id='submit' class='snail_admin' value='<?php _e("Save Changes") ?>' />
-      <button id='drop_button' class='snail_admin' style='border:1.5px solid red;'>
-        <?php _e("Delete All") ?>
-      </button>
-    </div>
-    <?php
   }
 
   static function do_sitemap_keywords_section($db_slug,$scripts) {
@@ -262,8 +270,8 @@ class Citysnail_Settings {
 
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
-      <input name='submit' type='submit' id='submit' class='snail_admin' value='<?php _e("Save Changes") ?>' />
-      <button id='drop_button' class='snail_admin' style='border:1.5px solid red;'>
+      <input name="submit" type="submit" id="submit" class="snail_admin" value="<?php _e("Save Changes") ?>"/>
+      <button id="drop_button" class="snail_admin" style="border:1.5px solid red;">
         <?php _e("Delete All") ?>
       </button>
     </div>
@@ -279,7 +287,7 @@ class Citysnail_Settings {
     }
     $schema_string = json_encode($report_schema);
     update_option('wp_citysnail_keywords',$report_schema);
-    echo '<div id="report_schema" class="invis">' . $schema_string . '</div>';
+    echo '<div id="report_schema" class="citysnail invis">' . $schema_string . '</div>';
   }
 
 }
