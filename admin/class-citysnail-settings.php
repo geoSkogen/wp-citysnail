@@ -23,14 +23,14 @@ class Citysnail_Settings {
 
     add_settings_section(
       'wp_citysnail_settings',                         //uniqueID
-      'Enter Your Domain & Sitemap',   //Title
+      'Enter Your Domain & Sitemap<hr/>',   //Title
       array('Citysnail_Settings','wp_citysnail_settings_section'),//CallBack Function
       'wp_citysnail'                                //page-slug
     );
 
     add_settings_section(
       'wp_citysnail_keywords',                         //uniqueID
-      'Associate Keywords with URLs',        //Title
+      'Associate Keywords with URLs<hr/>',        //Title
       array('Citysnail_Settings','wp_citysnail_keywords_section'),//CallBack Function
       'wp_citysnail_keywords'                         //page-slug
     );
@@ -181,7 +181,7 @@ class Citysnail_Settings {
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     echo $str;
     if ($sitemap_monster) {
-      echo $sitemap_monster->html_table;
+      echo $sitemap_monster->get_html_table($options);
     }
   }
 

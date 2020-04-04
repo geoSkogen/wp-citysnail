@@ -19,7 +19,7 @@ class Sitemap_Monster {
     $this->get_nested_page_arr();
     $this->new_map = $this->urls_from_arrays();
     $this->csv_str = $this->get_csv_nest();
-    $this->html_table = $this->get_html_table();
+  //  $this->html_table = $this->get_html_table();
   }
 
   public function get_path_arrs() {
@@ -110,16 +110,16 @@ class Sitemap_Monster {
     return $csv_str;
   }
 
-  public function get_html_table() {
+  public function get_html_table($data_table) {
     $nest_index = -1;
     $slug = '';
     $line = '';
     $html_str = '<table>';
-    $html_str .= $this->get_html_table_row(0,'/',count($this->branches));
+    $html_str .= $this->get_html_table_row(0,'/',count($this->branches),$data_table);
     foreach($this->new_page_arrs as $slug_arr) {
       $nest_index = count($slug_arr)-1;
       $slug =  '/' . $slug_arr[$nest_index] . '/';
-      $line = $this->get_html_table_row($nest_index,$slug,count($this->branches));
+      $line = $this->get_html_table_row($nest_index,$slug,count($this->branches),$data_table);
       $html_str .= $line;
     }
     $html_str .= '</table>';
@@ -142,13 +142,15 @@ class Sitemap_Monster {
     return $str;
   }
 
-  public function get_html_table_row($depth,$arg,$range) {
+  public function get_html_table_row($depth,$arg,$range,$options) {
+    $field_val = (isset($options[$arg])) ? $options[$arg] : '';
     $str = '<tr class="monster_row"><td class="short_cell drop_me">&times</td>';
     $str .= $this->repeat_me('<td></td>',$depth);
     $str .= '<td class="monster_slug">' . $arg . '</td>';
     $str .= $this->repeat_me('<td></td>', ($range-$depth-1) );
     $str .= '<td class="monster_key invis" data-toggle="block,invis">';
-    $str .= '<input class="citysnail zeroTest monster_field" type="text" name="' . $arg . '"/>';
+    $str .= '<input class="citysnail zeroTest monster_field" type="text"
+      name="wp_citysnail_structure[' . $arg . ']" value="' . $field_val . '"/>';
     $str .= '</td>';
     $str .= '</tr>';
     return $str;
