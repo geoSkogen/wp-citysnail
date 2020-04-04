@@ -37,7 +37,7 @@ class Citysnail_Settings {
 
     add_settings_section(
       'wp_citysnail_structure',                         //uniqueID
-      'Upload or Create Your Site Structure Worksheet<hr/>',        //Title
+      'Create Your Site Structure Worksheet<hr/>',        //Title
       array('Citysnail_Settings','wp_citysnail_structure_section'),//CallBack Function
       'wp_citysnail_structure'                         //page-slug
     );
@@ -78,8 +78,6 @@ class Citysnail_Settings {
     register_setting( 'wp_citysnail_structure', 'wp_citysnail_structure' );
     register_setting( 'wp_citysnail_keywords', 'wp_citysnail_keywords' );
   }
-
-  //Templates
 
   ////template 3 - settings section field - dynamically rendered <input/>
 
@@ -190,13 +188,10 @@ class Citysnail_Settings {
     //$placeholder = Snail_Tail::try_option_key($options,$this_field,$fallback_str);
     $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : $fallback_str;
     $value_tag = ($placeholder === $fallback_str) ? "placeholder" : "value";
-    return "<input type='text' class='citysnail zeroTest' id='{$this_field}' name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
+    return "<input type='text' class='citysnail zeroTest' id='{$this_field}'
+      name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
   }
 
-  public static function do_sitemap_structure_table() {
-    return "[sitemap_table]";
-
-  }
   ////template 2 - after settings section title
 
   static function wp_citysnail_settings_section() {

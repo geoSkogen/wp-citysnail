@@ -225,6 +225,7 @@ input.zeroTestModal {
   margin: 0 0 !important;
   line-height: 1 !important;
   max-height: 1em !important;
+  z-index: 10;
 }
 
 .monster_key {
@@ -236,6 +237,7 @@ input.zeroTestModal {
   left: -3000%;
   top: -5%;
   width: 380px;
+  z-index: 1000;
 }
 
 .form-wrap h3 {
