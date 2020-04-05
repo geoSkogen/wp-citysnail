@@ -213,6 +213,7 @@ input.zeroTestModal {
   color: red;
 }
 
+
 .monster_row {
   padding: 0 0 !important;
   margin: 0 0 !important;
@@ -246,4 +247,17 @@ input.zeroTestModal {
 
 form h2 {
 
+}
+
+.drop {
+  background-color: red !important;
+  opacity: 0.5;
+}
+
+.drop td.drop_me {
+  color: white !important;
+}
+
+.drop td.drop_me:hover {
+  color: white !important;
 }

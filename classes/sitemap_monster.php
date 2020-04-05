@@ -144,7 +144,7 @@ class Sitemap_Monster {
 
   public function get_html_table_row($depth,$arg,$range,$options) {
     $path = ($arg === '/') ? 'homepage' : $arg;
-    $field_val = (isset($options[$arg])) ? $options[$arg] : '';
+    $field_val = (isset($options[$path])) ? $options[$path] : '';
     $str = '<tr class="monster_row"><td class="short_cell drop_me">&times</td>';
     $str .= $this->repeat_me('<td></td>',$depth);
     $str .= '<td class="monster_slug">' . $path . '</td>';
