@@ -168,12 +168,15 @@ class Citysnail_Settings {
     //$str .= "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
     $str .= "<div class='flexOuterStart'>";
-    $str .= "<input type='text' class='zeroTest{$input_is_set}' id='structure_path' name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
+    $str .= "<input type='text' class='zeroTest{$input_is_set}' id='structure_path'
+      name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
     $str .= $sub;
     $str .= "<div class='snail_admin' id='structure_button{$button_is_set}'><b>{$this_file}</b>";
-    $str .= "<input id='structure_file' type='file' class='citysnail' name='wp_citysnail_structure[structure_file]'/>";
+    $str .= "<input id='structure_file' type='file' class='citysnail'
+      name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
-    $str .= "<input type='text' class='citysnail invis' id='my_pages' name='wp_citysnail_structure[my_pages]' value={$my_pages} />";
+    $str .= "<input type='text' class='citysnail invis' id='my_pages'
+      name='wp_citysnail_structure[my_pages]' value={$my_pages} />";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
@@ -195,7 +198,7 @@ class Citysnail_Settings {
   ////template 2 - after settings section title
 
   static function wp_citysnail_settings_section() {
-    self::do_simple_dynamic_section('wp_citysnail',['unset_all']);
+    self::do_simple_dynamic_section('wp_citysnail',[]);
   }
 
 

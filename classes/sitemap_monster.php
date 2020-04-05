@@ -143,14 +143,15 @@ class Sitemap_Monster {
   }
 
   public function get_html_table_row($depth,$arg,$range,$options) {
+    $path = ($arg === '/') ? 'homepage' : $arg;
     $field_val = (isset($options[$arg])) ? $options[$arg] : '';
     $str = '<tr class="monster_row"><td class="short_cell drop_me">&times</td>';
     $str .= $this->repeat_me('<td></td>',$depth);
-    $str .= '<td class="monster_slug">' . $arg . '</td>';
+    $str .= '<td class="monster_slug">' . $path . '</td>';
     $str .= $this->repeat_me('<td></td>', ($range-$depth-1) );
-    $str .= '<td class="monster_key invis" data-toggle="block,invis">';
-    $str .= '<input class="citysnail zeroTest monster_field" type="text"
-      name="wp_citysnail_structure[' . $arg . ']" value="' . $field_val . '"/>';
+    $str .= '<td class="monster_key invis" data-toggle="block,pause,invis">';
+    $str .= '<input class="citysnail zeroTest monster_field" type="text" data="none"
+      name="wp_citysnail_structure[' . $path . ']" value="' . $field_val . '"/>';
     $str .= '</td>';
     $str .= '</tr>';
     return $str;
