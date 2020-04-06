@@ -115,11 +115,15 @@ class Sitemap_Monster {
     $slug = '';
     $line = '';
     $html_str = '<table>';
-    $html_str .= $this->get_html_table_row(0,'/',count($this->branches),$data_table);
+    $html_str .= $this->get_html_table_row(
+      0,'/',count($this->branches),$data_table,[]
+    );
     foreach($this->new_page_arrs as $slug_arr) {
       $nest_index = count($slug_arr)-1;
       $slug =  '/' . $slug_arr[$nest_index] . '/';
-      $line = $this->get_html_table_row($nest_index,$slug,count($this->branches),$data_table);
+      $line = $this->get_html_table_row(
+        $nest_index,$slug,count($this->branches),$data_table,$slug_arr
+      );
       $html_str .= $line;
     }
     $html_str .= '</table>';
@@ -142,21 +146,23 @@ class Sitemap_Monster {
     return $str;
   }
 
-  public function get_html_table_row($depth,$arg,$range,$options) {
-    $path = ($arg === '/') ? 'homepage' : $arg;
-    $field_val = (isset($options[$path])) ? $options[$path] : '';
+  public function get_html_table_row($depth,$arg,$range,$options,$slug_arr) {
+    $slug = ($arg === '/') ? 'homepage' : $arg;
+    $url = $this->domain . '/';
+    $url .= ($arg === '/') ? '' : join('/', $slug_arr) . '/';
+    $field_val = (isset($options[$url])) ? $options[$url] : '';
     $str = '<tr class="monster_row"><td class="short_cell drop_me">&times</td>';
     $str .= $this->repeat_me('<td></td>',$depth);
-    $str .= '<td class="monster_slug">' . $path . '</td>';
+    $str .= '<td class="monster_slug">' . $slug . '</td>';
     $str .= $this->repeat_me('<td></td>', ($range-$depth-1) );
     $str .= '<td class="monster_key invis" data-toggle="block,pause,invis">';
-    $str .= '<input class="citysnail zeroTest monster_field" type="text" data="none"
-      name="wp_citysnail_structure[' . $path . ']" value="' . $field_val . '"/>';
+    $str .= '<input id="' . $url . '" class="citysnail zeroTest monster_field"
+      type="text" data="none" name="wp_citysnail_structure[' . $url . ']"
+      value="' . $field_val . '"/>';
     $str .= '</td>';
     $str .= '</tr>';
     return $str;
   }
-
 }
 
 ?>

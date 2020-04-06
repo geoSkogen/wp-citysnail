@@ -121,18 +121,24 @@ class Citysnail_Settings {
     $this_domain = ( $options_home['domain'] ) ?
       $options_home['domain'] : '';
     $my_domain = '';
+    // validates result of sitemap crawl
     $resources = (
       $options_keywords['resources'] &&
       is_array($options_keywords['resources']) &&
       count($options_keywords['resources'])
       ) ?
       $options_keywords['resources'] : '';
-    $my_pages = (
-      $options['my_pages'] &&
-      is_array($options['my_pages']) &&
-      count(array_keys($options['my_pages']))
-      ) ?
-      $options['my_pages'] : '';
+    // validates user-curated sitemap & keywords
+    if ($options['my_pages'] &&
+        is_array(json_decode($options['my_pages'])) &&
+        count(array_keys(json_decode($options['my_pages']))) ) {
+      $my_pages_list = array_keys(json_decode($options['my_pages']));
+      $my_pages_schema = json_encode($options['my_pages']);
+    } else {
+      $my_pages_list = $resources;
+      $my_pages_schema = json_encode($options['my_pages']);
+    }
+
 
     if ($options_keywords['domain']) {
       $my_domain = $options_keywords['domain'];
@@ -156,12 +162,12 @@ class Citysnail_Settings {
         )
       );
 
-    $my_pages = (is_array($resources)) ? join(',',$resources) : '';
+    // add UI option - use raw resources or my pages ?
 
     $value_tag = (!$this_path) ? 'placeholder' : 'value';
     $placeholder = (!$this_path) ? '(not set)' : $this_path;
     $sub = (!$this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
-    $button_is_set = '_unset';
+    $button_is_set = (!$this_path) ? '' : '_unset';
     $input_is_set = (!$this_path) ? '' : ' slight';
 
     $str = "";
@@ -176,7 +182,7 @@ class Citysnail_Settings {
       name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
     $str .= "<input type='text' class='citysnail invis' id='my_pages'
-      name='wp_citysnail_structure[my_pages]' value={$my_pages} />";
+      name='wp_citysnail_structure[my_pages]' value='{$my_pages_schema}'/>";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
@@ -204,7 +210,7 @@ class Citysnail_Settings {
 
   static function wp_citysnail_structure_section() {
     self::do_simple_dynamic_section('wp_citysnail_structure',
-      ['unset_all','upload_helper','structure_helper']
+      ['unset_all','upload_helper','structure_helper','mypages_editor']
     );
     wp_enqueue_media();
     wp_register_script(
