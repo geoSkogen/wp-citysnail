@@ -84,11 +84,6 @@ class Citysnail_Settings {
   static function wp_citysnail_keywords_field() {
     $str = "";
     $sections = ['title','title_vs_h1','h1','anchors','images'];
-    $report =   array(
-      'color' => 'red',
-      'flavor' => 'good'
-    );
-    $report_schema = json_encode($report);
     $str .= '<div class="flexOuterCenter"><div id="relshell">';
     $str .= '<div data-toggle="block" class="invis" id="snail_modal">';
     $str .= '<div class="flexOuterEnd"><div id="close_modal">&times;</div></div>';
@@ -136,7 +131,7 @@ class Citysnail_Settings {
       $my_pages_schema = json_encode($options['my_pages']);
     } else {
       $my_pages_list = $resources;
-      $my_pages_schema = json_encode($options['my_pages']);
+      $my_pages_schema = '(not set)';
     }
 
 
@@ -244,7 +239,9 @@ class Citysnail_Settings {
   }
 
   static function do_sitemap_keywords_section($db_slug,$scripts) {
-    $options = get_option($db_slug);
+    $options_keywords = get_option($db_slug);
+    $options_structure = get_option('wp_citysnail_structure');
+    $options = get_option('wp_citysnail');
     $dropped = $options['drop'];
     if ($dropped === "TRUE") {
       error_log('got drop');
@@ -252,18 +249,41 @@ class Citysnail_Settings {
     } else {
       error_log("drop=false");
     }
-    $options = get_option('wp_citysnail');
+
+    $resources = (
+      $options_keywords['resources'] &&
+      is_array($options_keywords['resources']) &&
+      count($options_keywords['resources'])
+      ) ?
+      $options_keywords['resources'] : '';
+
+    if ($options_structure['my_pages'] &&
+        is_array(json_decode($options_structure['my_pages'])) &&
+        count(array_keys(json_decode($options_structure['my_pages']))) ) {
+      $my_pages_list = array_keys(json_decode($options_structure['my_pages']));
+      $my_pages_schema = json_encode($options_structure['my_pages']);
+    } else {
+      $my_pages_list = $resources;
+      $my_pages_schema = '(not set)';
+    }
+
     $my_domain_name = (isset($options['domain']) && $options['domain'] != '') ?
       $options['domain'] : false;
+
     if ($my_domain_name) {
       $my_protocol = 'https://';
       $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$my_domain_name)) ?
         $my_domain_name : $my_protocol . $my_domain_name;
-      $map_name = ($options['sitemap']) ? $options['sitemap'] : 'sitemap.xml';
-      $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
-      $map_list = Snail::parse_sitemap_dom($map_dom);
-      $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
+      if ($resources) {
+        $sitemap_monster = new Sitemap_Monster($my_domain,$resources);
+      } else {
+        $map_name = ($options['sitemap']) ? $options['sitemap'] : 'sitemap.xml';
+        $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
+        $map_list = Snail::parse_sitemap_dom($map_dom);
+        $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
+      }
       $sitemap_snail = new Sitemap_Snail($sitemap_monster);
+      //Snail::init_curl_crawl($my_domain,$map_name,$client_data);
     }
 
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
@@ -271,7 +291,6 @@ class Citysnail_Settings {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
     }
     ?>
-
     <hr/>
     <div style="display:flex;flex-flow:row wrap;justify-content:space-between;">
       <input name="submit" type="submit" id="submit" class="snail_admin" value="<?php _e("Save Changes") ?>"/>
@@ -290,7 +309,7 @@ class Citysnail_Settings {
       echo $sitemap_snail->do_sitemap_item($page_url);
     }
     $schema_string = json_encode($report_schema);
-    update_option('wp_citysnail_keywords',$report_schema);
+    update_option($db_slug,$report_schema);
     echo '<div id="report_schema" class="citysnail invis">' . $schema_string . '</div>';
   }
 
