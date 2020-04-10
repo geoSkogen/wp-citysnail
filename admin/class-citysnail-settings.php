@@ -104,86 +104,51 @@ class Citysnail_Settings {
   }
 
   static function wp_citysnail_structure_field() {
-    $options = get_option('wp_citysnail_structure');
-    $options_home = get_option('wp_citysnail');
-    $options_keywords = get_option('wp_citysnail_keywords');
     /*
     $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
     */
-    $this_path = ( $options['structure_path'] ) ?
-      $options['structure_path'] : '';
-    $this_domain = ( $options_home['domain'] ) ?
-      $options_home['domain'] : '';
-    $my_domain = '';
-    // validates result of sitemap crawl
-    $resources = (
-      $options_keywords['resources'] &&
-      is_array($options_keywords['resources']) &&
-      count($options_keywords['resources'])
-      ) ?
-      $options_keywords['resources'] : '';
-    // validates user-curated sitemap & keywords
-    if ($options['my_pages'] &&
-        is_array(json_decode($options['my_pages'])) &&
-        count(array_keys(json_decode($options['my_pages']))) ) {
-      $my_pages_list = array_keys(json_decode($options['my_pages']));
-      $my_pages_schema = json_encode($options['my_pages']);
-    } else {
-      $my_pages_list = $resources;
-      $my_pages_schema = '(not set)';
-    }
+    $options = get_option('wp_citysnail_structure');
+    $client_snail = Snail_Tail::get_client_snail();
+    $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
 
-
-    if ($options_keywords['domain']) {
-      $my_domain = $options_keywords['domain'];
-    } else if ($this_domain) {
-      $my_protocol = 'https://';
-      $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$this_domain)) ?
-        $this_domain : $my_protocol . $this_domain;
-    }
-
-    $sitemap_monster = ($resources && $my_domain) ?
-      new Sitemap_Monster($my_domain,$resources) : false;
-
-    $this_file = (!$this_path) ? 'upload a file' :
+    $this_file = (!$client_snail->this_path) ? 'upload a file' :
       str_replace(
         site_url(),
         '',
         preg_replace(
           '/\/wp-content\/uploads\/[0-9]{4}\/[0-9]{2}\//',
           '',
-          $this_path
+          $client_snail->this_path
         )
       );
 
     // add UI option - use raw resources or my pages ?
-
-    $value_tag = (!$this_path) ? 'placeholder' : 'value';
-    $placeholder = (!$this_path) ? '(not set)' : $this_path;
-    $sub = (!$this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
-    $button_is_set = (!$this_path) ? '' : '_unset';
-    $input_is_set = (!$this_path) ? '' : ' slight';
+    $value_tag = (!$client_snail->this_path) ? 'placeholder' : 'value';
+    $placeholder = (!$client_snail->this_path) ? '(not set)' : $client_snail->this_path;
+    $sub = (!$client_snail->this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
+    $button_is_set = (!$client_snail->this_path) ? '' : '_unset';
+    $input_is_set = (!$client_snail->this_path) ? '' : ' slight';
 
     $str = "";
     //$str .= "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
     $str .= "<div class='flexOuterStart'>";
     $str .= "<input type='text' class='zeroTest{$input_is_set}' id='structure_path'
-      name='wp_citysnail_structure[structure_path]' {$value_tag}='{$this_path}'/>";
+      name='wp_citysnail_structure[structure_path]' {$value_tag}='{$client_snail->this_path}'/>";
     $str .= $sub;
     $str .= "<div class='snail_admin' id='structure_button{$button_is_set}'><b>{$this_file}</b>";
     $str .= "<input id='structure_file' type='file' class='citysnail'
       name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
     $str .= "<input type='text' class='citysnail invis' id='my_pages'
-      name='wp_citysnail_structure[my_pages]' value='{$my_pages_schema}'/>";
+      name='wp_citysnail_structure[my_pages]' value='{$client_snail->my_pages_schema}'/>";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     echo $str;
-    if ($sitemap_monster) {
-      echo $sitemap_monster->get_html_table($options);
+    if ($client_snail->sitemap_monster) {
+      echo $client_snail->sitemap_monster->get_html_table($options);
     }
   }
 
@@ -239,9 +204,8 @@ class Citysnail_Settings {
   }
 
   static function do_sitemap_keywords_section($db_slug,$scripts) {
-    $options_keywords = get_option($db_slug);
-    $options_structure = get_option('wp_citysnail_structure');
-    $options = get_option('wp_citysnail');
+
+    $options = get_option($db_slug);
     $dropped = $options['drop'];
     if ($dropped === "TRUE") {
       error_log('got drop');
@@ -250,41 +214,9 @@ class Citysnail_Settings {
       error_log("drop=false");
     }
 
-    $resources = (
-      $options_keywords['resources'] &&
-      is_array($options_keywords['resources']) &&
-      count($options_keywords['resources'])
-      ) ?
-      $options_keywords['resources'] : '';
-
-    if ($options_structure['my_pages'] &&
-        is_array(json_decode($options_structure['my_pages'])) &&
-        count(array_keys(json_decode($options_structure['my_pages']))) ) {
-      $my_pages_list = array_keys(json_decode($options_structure['my_pages']));
-      $my_pages_schema = json_encode($options_structure['my_pages']);
-    } else {
-      $my_pages_list = $resources;
-      $my_pages_schema = '(not set)';
-    }
-
-    $my_domain_name = (isset($options['domain']) && $options['domain'] != '') ?
-      $options['domain'] : false;
-
-    if ($my_domain_name) {
-      $my_protocol = 'https://';
-      $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$my_domain_name)) ?
-        $my_domain_name : $my_protocol . $my_domain_name;
-      if ($resources) {
-        $sitemap_monster = new Sitemap_Monster($my_domain,$resources);
-      } else {
-        $map_name = ($options['sitemap']) ? $options['sitemap'] : 'sitemap.xml';
-        $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
-        $map_list = Snail::parse_sitemap_dom($map_dom);
-        $sitemap_monster = new Sitemap_Monster($my_domain,$map_list);
-      }
-      $sitemap_snail = new Sitemap_Snail($sitemap_monster);
-      //Snail::init_curl_crawl($my_domain,$map_name,$client_data);
-    }
+    $client_snail = Snail_Tail::get_client_snail();
+    $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
+    //Snail::init_curl_crawl($my_domain,$map_name,$client_data);
 
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
     foreach ($scripts as $script) {
@@ -300,11 +232,11 @@ class Citysnail_Settings {
     </div>
     <?php
     $report_schema = array(
-      'domain' => $my_domain,
+      'domain' => $client_snail->my_domain,
       'resources' => array(),
       'report' => ''
     );
-    foreach ($sitemap_monster->new_map as $page_url) {
+    foreach ($client_snail->sitemap_monster->new_map as $page_url) {
       $report_schema['resources'][] = $page_url;
       echo $sitemap_snail->do_sitemap_item($page_url);
     }

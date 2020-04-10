@@ -1,0 +1,27 @@
+options table
+
+    wp_citysnail
+
+        domain
+
+        sitemap
+
+    wp_citysnail_structure
+
+        structure_path
+
+        structure_file
+
+        my_pages
+
+    wp_citysnail_keywords
+
+        domain
+
+        resources
+
+        report
+
+            {full_url}
+
+                
