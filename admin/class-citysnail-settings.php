@@ -2,6 +2,9 @@
 
 class Citysnail_Settings {
 
+  public static $db_prefix = 'wp_citysnail';
+  public static $db_slugs = ['','structure','keywords'];
+
   public static function do_field_title_buttons() {
     $str = '';
     $str .= '<div style="display:flex;flex-flow:row wrap;justify-content:center;">';
@@ -108,10 +111,13 @@ class Citysnail_Settings {
     $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
     */
-    $options = get_option('wp_citysnail_structure');
-    $client_snail = Snail_Tail::get_client_snail();
-    $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
 
+    $client_snail = Snail_Tail::get_client_snail(
+      self::$db_prefix,
+      self::$db_slugs,
+      'wp_citysnail_structure'
+    );
+    $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
     $this_file = (!$client_snail->this_path) ? 'upload a file' :
       str_replace(
         site_url(),
@@ -129,7 +135,6 @@ class Citysnail_Settings {
     $sub = (!$client_snail->this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
     $button_is_set = (!$client_snail->this_path) ? '' : '_unset';
     $input_is_set = (!$client_snail->this_path) ? '' : ' slight';
-
     $str = "";
     //$str .= "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
@@ -146,9 +151,10 @@ class Citysnail_Settings {
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
+    print_r($client_snail->my_pages_schema);
     echo $str;
     if ($client_snail->sitemap_monster) {
-      echo $client_snail->sitemap_monster->get_html_table($options);
+      echo $client_snail->sitemap_monster->get_html_table($client_snail->options);
     }
   }
 
@@ -167,7 +173,6 @@ class Citysnail_Settings {
     self::do_simple_dynamic_section('wp_citysnail',[]);
   }
 
-
   static function wp_citysnail_structure_section() {
     self::do_simple_dynamic_section('wp_citysnail_structure',
       ['unset_all','upload_helper','structure_helper','mypages_editor']
@@ -181,40 +186,24 @@ class Citysnail_Settings {
     wp_enqueue_script('citysnail_media_uploader_csv');
   }
 
-
   static function wp_citysnail_keywords_section() {
     self::do_sitemap_keywords_section('wp_citysnail_keywords',
       ['unset_all','sitemap_nester','modal_model']
     );
   }
 
-  static function do_simple_dynamic_section($db_slug,$scripts) {
-    $options = get_option($db_slug);
-    $dropped = $options['drop'];
-    if ($dropped === "TRUE") {
-      error_log('got drop');
-      delete_option($db_slug);
-    } else {
-      error_log("drop=false");
-    }
-
+ static function do_simple_dynamic_section($db_slug,$scripts) {
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
     }
   }
 
   static function do_sitemap_keywords_section($db_slug,$scripts) {
-
-    $options = get_option($db_slug);
-    $dropped = $options['drop'];
-    if ($dropped === "TRUE") {
-      error_log('got drop');
-      delete_option($db_slug);
-    } else {
-      error_log("drop=false");
-    }
-
-    $client_snail = Snail_Tail::get_client_snail();
+    $client_snail = Snail_Tail::get_client_snail(
+      self::$db_prefix,
+      self::$db_slugs,
+      $db_slug
+    );
     $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
     //Snail::init_curl_crawl($my_domain,$map_name,$client_data);
 
