@@ -95,11 +95,10 @@ class Snail_Tail {
      }
 
     // validates user-curated sitemap & keywords
-    if ($options['structure']['my_pages'] &&
-        is_array(json_decode($options['structure']['my_pages'])) &&
-        count(array_keys(json_decode($options['structure']['my_pages']))) ) {
-      $my_pages_list = array_keys(json_decode($options['structure']['my_pages']));
-      $my_pages_schema = json_encode($options['structure']['my_pages']);
+    if ( isset($options['structure']['my_pages']) &&
+        is_string($options['structure']['my_pages'])) {
+      $my_pages_list = array_keys(json_decode($options['structure']['my_pages'],true));
+      $my_pages_schema = $options['structure']['my_pages'];
     } else {
       $my_pages_list = $resources;
       $my_pages_schema = '';

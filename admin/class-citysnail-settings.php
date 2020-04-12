@@ -8,7 +8,7 @@ class Citysnail_Settings {
   public static function do_field_title_buttons() {
     $str = '';
     $str .= '<div style="display:flex;flex-flow:row wrap;justify-content:center;">';
-    $str .= '<input name="submit" type="submit" id="submit" class="snail_admin" value="Save Changes"/>';
+    $str .= '<input name="submit" type="submit" id="top_submit" class="snail_admin" value="Save Changes"/>';
     $str .= '<button id="drop_button" class="snail_admin" style="border:1.5px solid red;">Delete All</button>';
     $str .= '</div>';
     return $str;
@@ -151,7 +151,6 @@ class Citysnail_Settings {
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
-    print_r($client_snail->my_pages_schema);
     echo $str;
     if ($client_snail->sitemap_monster) {
       echo $client_snail->sitemap_monster->get_html_table($client_snail->options);
