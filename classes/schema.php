@@ -7,14 +7,14 @@ class Schema {
   public $labeled_columns = array();
   public $labeled_rows = array();
 
-  function __construct($filename, $path) {
-    $this->data_index = $this->import_csv_index($filename, $path);
+  function __construct($abspath) {
+    $this->data_index = $this->import_csv_index($abspath);
     //$this->data_assoc = $this->make_assoc($filename, $path);
   }
 
-  public function import_csv_index($filename, $path) {
+  public function import_csv_index($abspath) {
     $result = array();
-    if (($handle = fopen(__DIR__ . "/" . $path . "/" . $filename . ".csv", "r")) !== FALSE) {
+    if (($handle = fopen($abspath, "r")) !== FALSE) {
       while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
         $result[] = $data;
       }

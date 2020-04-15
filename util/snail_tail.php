@@ -77,6 +77,8 @@ class Snail_Tail {
     $this_domain = ( $options['home']['domain'] ) ?
       $options['home']['domain'] : '';
 
+    $map_name = ($options['home']['sitemap']) ? $options['home']['sitemap'] : 'sitemap.xml';
+
     $my_domain = '';
     if ($this_domain) {
       $my_protocol = 'https://';
@@ -89,7 +91,6 @@ class Snail_Tail {
        count($options['keywords']['resources'])) {
        $resources = $options['keywords']['resources'];
      } else {
-       $map_name = ($options['sitemap']) ? $options['sitemap'] : 'sitemap.xml';
        $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
        $resources = Snail::parse_sitemap_dom($map_dom);
      }
@@ -113,8 +114,13 @@ class Snail_Tail {
     $result->my_pages_schema = $my_pages_schema;
     $result->my_domain = $my_domain;
     $result->options = $this_options;
+    $result->map_name = $map_name;
 
     return $result;
+  }
+
+  public static function url_roll_call() {
+    
   }
 }
 

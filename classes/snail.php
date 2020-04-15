@@ -181,10 +181,15 @@ class Snail {
   public static function init_curl_crawl($domain,$page_path,$client_data) {
     $crawl_report = [];
     $this_dom = array();
-    $sitemap_dom = ($page_path)?
-      self::curl_get_dom($domain . '/' . $page_path) :
-      self::curl_get_dom($domain . '/sitemap.xml');
-    $resource_arr = self::parse_sitemap_dom($sitemap_dom);
+    if (is_array($page_nath)) {
+      $resource_arr = $page_path;
+    } else {
+      $sitemap_dom = ($page_path)?
+        self::curl_get_dom($domain . '/' . $page_path) :
+        self::curl_get_dom($domain . '/sitemap.xml');
+      $resource_arr = self::parse_sitemap_dom($sitemap_dom);
+    }
+
     foreach( $resource_arr as $resource ) {
       $this_dom = self::curl_get_dom($resource);
       $crawl_report[$resource] = self::spider_page_dom($this_dom,$client_data,$resource);

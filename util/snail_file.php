@@ -6,6 +6,15 @@ class Snail_File {
 
   }
 
+  public static function parse_structure_file($abspath) {
+    $result = array();
+    if (strpos($abspath,'.csv')===strlen($abspath)-4) {
+      $result_schema = new Schema($abspath);
+      $result = Schema::get_labeled_rows($result_schema->data_index);
+    }
+    return $result;
+  }
+
   public static function csv_upload_handler() {
     $post_data = array(
   		'post_title' => $_POST['post_title'],

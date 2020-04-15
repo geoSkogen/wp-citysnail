@@ -118,6 +118,7 @@ class Citysnail_Settings {
       'wp_citysnail_structure'
     );
     $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
+    $structure = Snail_File::parse_structure_file($client_snail->this_path);
     $this_file = (!$client_snail->this_path) ? 'upload a file' :
       str_replace(
         site_url(),
@@ -128,7 +129,6 @@ class Citysnail_Settings {
           $client_snail->this_path
         )
       );
-
     // add UI option - use raw resources or my pages ?
     $value_tag = (!$client_snail->this_path) ? 'placeholder' : 'value';
     $placeholder = (!$client_snail->this_path) ? '(not set)' : $client_snail->this_path;
@@ -204,7 +204,13 @@ class Citysnail_Settings {
       $db_slug
     );
     $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
-    //Snail::init_curl_crawl($my_domain,$map_name,$client_data);
+    /*
+    Snail::init_curl_crawl(
+      $client_snail->my_domain,
+      $client_snail->map_name,
+      $client_data
+    );
+    */
 
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
     foreach ($scripts as $script) {
