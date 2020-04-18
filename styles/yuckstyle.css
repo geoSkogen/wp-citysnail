@@ -235,7 +235,7 @@ input.zeroTestModal {
 
 .monster_field {
   position: absolute;
-  left: -3000%;
+  left: -1000%;
   top: -5%;
   width: 380px;
   z-index: 1000;
@@ -260,4 +260,12 @@ form h2 {
 
 .drop td.drop_me:hover {
   color: white !important;
+}
+
+.radioLabel {
+  padding: 0 0.75em;
+}
+
+input[type="radio"] {
+  margin: 0 1.5em;
 }

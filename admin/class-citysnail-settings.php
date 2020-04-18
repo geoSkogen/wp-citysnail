@@ -15,10 +15,10 @@ class Citysnail_Settings {
   }
 
   public static function do_structure_field_title() {
-    $str = '<br/>';
-    $str .= '<ul><li>Upload a formatted CSV</li>';
+    $str = '';
+    $str .= '<ul><li>Upload a CSV file</li>';
     $str .= '<li style="text-indent:4.5em;padding-bottom:0;margin-bottom:0;">&ndash; or &ndash;</li>';
-    $str .= '<li>Create one here <sub class="bigger">&nbsp;»</sub><sub class="bigger">&nbsp;»</sub></li></ul>';
+    $str .= '<li>-or Create one here <sub class="bigger">&nbsp;»</sub><sub class="bigger">&nbsp;»</sub></li></ul>';
     return $str;
   }
 
@@ -63,7 +63,7 @@ class Citysnail_Settings {
 
     add_settings_field(
       'structure',                   //uniqueID - "param_1", etc.
-      'Site Structure Worksheet:' . self:: do_structure_field_title() . self::do_field_title_buttons(),               //uniqueTitle -
+      ' ' . self::do_field_title_buttons(),               //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_structure_field'),//callback
       'wp_citysnail_structure',                   //page-slug
       'wp_citysnail_structure'          //section (parent settings-section uniqueID)
@@ -130,14 +130,26 @@ class Citysnail_Settings {
         )
       );
     // add UI option - use raw resources or my pages ?
+    $format = isset(get_option('wp_citysnail_structure')['format']) ?
+      get_option('wp_citysnail_structure')['format'] : '';
     $value_tag = (!$client_snail->this_path) ? 'placeholder' : 'value';
     $placeholder = (!$client_snail->this_path) ? '(not set)' : $client_snail->this_path;
     $sub = (!$client_snail->this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
     $button_is_set = (!$client_snail->this_path) ? '' : '_unset';
     $input_is_set = (!$client_snail->this_path) ? '' : ' slight';
+    $select = array( 'sitemap' => '', 'structure' => '', ''=>'');
+    $select[$format] = 'checked';
     $str = "";
     //$str .= "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
+
+    $str .= "<div class='flexOuterStart'><span>Crawl Options:</span>";
+    $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='structure' {$select['structure']}/>";
+    $str .= "<label class='radioLabel' for='structure'>my structure worksheet</label>";
+    $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='sitemap' {$select['sitemap']}/>";
+    $str .= "<label class='radioLabel' for='sitemap'>full sitemap</label>";
+    $str .= "</div>";
+
     $str .= "<div class='flexOuterStart'>";
     $str .= "<input type='text' class='zeroTest{$input_is_set}' id='structure_path'
       name='wp_citysnail_structure[structure_path]' {$value_tag}='{$client_snail->this_path}'/>";
@@ -146,12 +158,16 @@ class Citysnail_Settings {
     $str .= "<input id='structure_file' type='file' class='citysnail'
       name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
+
     $str .= "<input type='text' class='citysnail invis' id='my_pages'
       name='wp_citysnail_structure[my_pages]' value='{$client_snail->my_pages_schema}'/>";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
+
+    //uploader inputs
     echo $str;
+    //interactive sitemap table
     if ($client_snail->sitemap_monster) {
       echo $client_snail->sitemap_monster->get_html_table($client_snail->options);
     }
