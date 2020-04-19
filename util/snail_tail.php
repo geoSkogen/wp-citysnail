@@ -49,9 +49,11 @@ class Snail_Tail {
     $options = array(
       'home'
     );
+    /*
     $options['home'] = get_option('wp_citysnail');
     $options['structure'] = get_option('wp_citysnail_structure');
     $options['keywords'] = get_option('wp_citysnail_keywords');
+    */
     /*
     $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
@@ -68,7 +70,8 @@ class Snail_Tail {
     foreach($db_slugs as $slug) {
       $splitter = ($slug) ? '_' : '';
       $key = $db_prefix . $splitter . $slug;
-      $options[$slug] = get_option($key);
+      $prop = ($slug) ? $slug : 'home';
+      $options[$prop] = get_option($key);
     }
 
     $this_path = ( $options['structure']['structure_path'] ) ?
@@ -79,6 +82,9 @@ class Snail_Tail {
 
     $map_name = ($options['home']['sitemap']) ? $options['home']['sitemap'] : 'sitemap.xml';
 
+    $format = ( $this_path && $options['structure']['format'] === 'structure') ?
+      'structure' : 'sitemap';
+      
     $my_domain = '';
     if ($this_domain) {
       $my_protocol = 'https://';
@@ -115,12 +121,13 @@ class Snail_Tail {
     $result->my_domain = $my_domain;
     $result->options = $this_options;
     $result->map_name = $map_name;
+    $result->format = $format;
 
     return $result;
   }
 
   public static function url_roll_call() {
-    
+
   }
 }
 
