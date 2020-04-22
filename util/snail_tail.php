@@ -43,6 +43,16 @@ class Snail_Tail {
 
   }
 
+  public static function get_page_schema($resource_arr,$db_table) {
+    $schema = array();
+    foreach($resource_arr as $url) {
+      $resource = urldecode($url);
+      $schema[$resource] = ( isset($db_table[$resource]) ) ?
+        $db_table[$resource] : '';
+    }
+    return $schema;
+  }
+
   public static function get_client_snail($db_prefix,$db_slugs,$this_db_slug) {
 
     $result = new stdClass();
@@ -80,35 +90,39 @@ class Snail_Tail {
     $this_domain = ( $options['home']['domain'] ) ?
       $options['home']['domain'] : '';
 
-    $map_name = ($options['home']['sitemap']) ? $options['home']['sitemap'] : 'sitemap.xml';
+    $map_name = ($options['home']['sitemap']) ?
+      $options['home']['sitemap'] : 'sitemap.xml';
 
-    $format = ( $this_path && $options['structure']['format'] === 'structure') ?
+    $format = ($options['structure']['format'] === 'structure') ?
       'structure' : 'sitemap';
-      
+
+    //error_log(print_r($options['structure']));
+
     $my_domain = '';
     if ($this_domain) {
       $my_protocol = 'https://';
       $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$this_domain)) ?
         $this_domain : $my_protocol . $this_domain;
     }
-    // validates result of sitemap crawl
-    if ($options['keywords']['resources'] &&
-       is_array($options['keywords']['resources']) &&
-       count($options['keywords']['resources'])) {
-       $resources = $options['keywords']['resources'];
-     } else {
-       $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
-       $resources = Snail::parse_sitemap_dom($map_dom);
-     }
-
-    // validates user-curated sitemap & keywords
-    if ( isset($options['structure']['my_pages']) &&
-        is_string($options['structure']['my_pages'])) {
+    // determines which version of sitemap to give to monster
+    // and which schema to commit to builder
+    if ($format==='structure' && $this_db_slug==='wp_citysnail_structure' &&
+         isset($options['structure']['my_pages']) &&
+         is_string($options['structure']['my_pages'])) {
       $my_pages_list = array_keys(json_decode($options['structure']['my_pages'],true));
       $my_pages_schema = $options['structure']['my_pages'];
+      $resources = $my_pages_list;
+    } else if ($options['keywords']['resources'] &&
+      is_array($options['keywords']['resources']) &&
+      count($options['keywords']['resources'])) {
+      $resources = $options['keywords']['resources'];
+      $my_pages_schema = self::get_page_schema($resources,$options['structure']);
+      $my_pages_list = '';
     } else {
-      $my_pages_list = $resources;
-      $my_pages_schema = '';
+      $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
+      $resources = Snail::parse_sitemap_dom($map_dom);
+      $my_pages_schema = self::get_page_schema($resources,$options['structure']);
+      $my_pages_list = '';
     }
 
     $sitemap_monster = ($resources && $my_domain) ?
@@ -117,7 +131,7 @@ class Snail_Tail {
     $result->sitemap_monster = $sitemap_monster;
     $result->this_path = $this_path;
     $result->my_pages_list = $my_pages_list;
-    $result->my_pages_schema = $my_pages_schema;
+    $result->my_pages_schema = json_encode($my_pages_schema);
     $result->my_domain = $my_domain;
     $result->options = $this_options;
     $result->map_name = $map_name;
