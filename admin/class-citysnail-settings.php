@@ -117,7 +117,6 @@ class Citysnail_Settings {
       'wp_citysnail_structure'
     );
     $sitemap_snail = new Sitemap_Snail($client_snail->sitemap_monster);
-    $structure = Snail_File::parse_structure_file($client_snail->this_path);
     $this_file = (!$client_snail->this_path) ? 'upload a file' :
       str_replace(
         site_url(),
@@ -128,23 +127,25 @@ class Citysnail_Settings {
           $client_snail->this_path
         )
       );
-    // add UI option - use raw resources or my pages ?
+
+    //display options
     $value_tag = (!$client_snail->this_path) ? 'placeholder' : 'value';
     $placeholder = (!$client_snail->this_path) ? '(not set)' : $client_snail->this_path;
     $sub = (!$client_snail->this_path) ? '' : '<!--<br/><span>click to change file:</span>-->';
     $button_is_set = (!$client_snail->this_path) ? '' : '_unset';
     $input_is_set = (!$client_snail->this_path) ? '' : ' slight';
-    $select = array( 'sitemap' => '', 'structure' => '', ''=>'');
+    $select = array( 'sitemap' => '', 'structure' => '', 'file'=>'',''=>'');
     $select[$client_snail->format] = 'checked';
+    //uploader inputs
     $str = "";
-    //$str .= "<div><b>upload your site structure worksheet:</b></div><br/>";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
-
     $str .= "<div class='flexOuterStart'><span>Crawl Options:</span>";
     $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='structure' {$select['structure']}/>";
     $str .= "<label class='radioLabel' for='structure'>my structure worksheet</label>";
     $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='sitemap' {$select['sitemap']}/>";
     $str .= "<label class='radioLabel' for='sitemap'>full sitemap</label>";
+    $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='file' {$select['file']}/>";
+    $str .= "<label class='radioLabel' for='sitemap'>re-crawl structure file</label>";
     $str .= "</div>";
 
     $str .= "<div class='flexOuterStart'>";
@@ -155,14 +156,11 @@ class Citysnail_Settings {
     $str .= "<input id='structure_file' type='file' class='citysnail'
       name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
-
     $str .= "<input type='text' class='citysnail invis' id='my_pages'
       name='wp_citysnail_structure[my_pages]' value='{$client_snail->my_pages_schema}'/>";
-
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
-
     //uploader inputs
     echo $str;
     //interactive sitemap table

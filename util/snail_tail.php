@@ -43,6 +43,13 @@ class Snail_Tail {
 
   }
 
+  public static function validate_structure_file($schema,$table) {
+    $result = new stdClass();
+    $result->schema = array();
+    $result->error = [0,'no errors'];
+    return $result;
+  }
+
   public static function get_page_schema($resource_arr,$db_table) {
     $schema = array();
     foreach($resource_arr as $url) {
@@ -84,19 +91,29 @@ class Snail_Tail {
       $options[$prop] = get_option($key);
     }
 
-    $this_path = ( $options['structure']['structure_path'] ) ?
+    $this_path = ( isset($options['structure']['structure_path']) ) ?
       $options['structure']['structure_path'] : '';
 
-    $this_domain = ( $options['home']['domain'] ) ?
+    $this_domain = ( isset($options['home']['domain']) ) ?
       $options['home']['domain'] : '';
 
-    $map_name = ($options['home']['sitemap']) ?
+    $map_name = ( isset($options['home']['sitemap']) ) ?
       $options['home']['sitemap'] : 'sitemap.xml';
 
-    $format = ($options['structure']['format'] === 'structure') ?
-      'structure' : 'sitemap';
+    $format_field = ( isset($options['structure']['format']) ) ?
+      $options['structure']['format'] : 'sitemap';
 
-    //error_log(print_r($options['structure']));
+    switch($format_field) {
+      case 'file' :
+        $format = ($this_path) ? 'file' : 'sitemap';
+        break;
+      case 'structure' :
+      case 'sitemap' :
+        $format = $format_field;
+        break;
+      default:
+        $format = 'sitemap';
+    }
 
     $my_domain = '';
     if ($this_domain) {
@@ -104,29 +121,49 @@ class Snail_Tail {
       $my_domain = (preg_match('/http(s)?\:\/\/(www)?.*/',$this_domain)) ?
         $this_domain : $my_protocol . $this_domain;
     }
-    // determines which version of sitemap to give to monster
-    // and which schema to commit to builder
-    if ($format==='structure' && $this_db_slug==='wp_citysnail_structure' &&
-         isset($options['structure']['my_pages']) &&
-         is_string($options['structure']['my_pages'])) {
-      $my_pages_list = array_keys(json_decode($options['structure']['my_pages'],true));
-      $my_pages_schema = $options['structure']['my_pages'];
-      $resources = $my_pages_list;
-    } else if ($options['keywords']['resources'] &&
-      is_array($options['keywords']['resources']) &&
-      count($options['keywords']['resources'])) {
+
+    if (isset($options['keywords']['resources']) &&
+        is_array($options['keywords']['resources']) &&
+        count($options['keywords']['resources'])) {
       $resources = $options['keywords']['resources'];
-      $my_pages_schema = self::get_page_schema($resources,$options['structure']);
-      $my_pages_list = '';
     } else {
       $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
       $resources = Snail::parse_sitemap_dom($map_dom);
-      $my_pages_schema = self::get_page_schema($resources,$options['structure']);
-      $my_pages_list = '';
+    }
+    //default setting - crawl the whole site
+    $my_pages_schema = self::get_page_schema($resources,$options['structure']);
+    $my_pages_list = $resources;
+
+    switch($this_db_slug) {
+      case 'wp_citysnail_structure' :
+        switch ($format) {
+          case 'file' :
+              $structure = ($this_path) ?
+                self::validate_structure_file(
+                  Snail_File::parse_structure_file($this_path)
+                  ) : '';
+              $upload_errors = $structure->error;
+              $my_pages_schema = ($structure->error[0] < 3) ? $structure->schema : $my_pages_schema;
+              $my_pages_list = ($structure->error[0] < 3) ? array_keys($structure->schema) : $my_pages_list;
+            break;
+          case 'structure' :
+            if (isset($options['structure']['my_pages']) &&
+                is_string($options['structure']['my_pages'])) {
+                  $my_pages_schema = $options['structure']['my_pages'];
+                  $my_pages_list = array_keys(json_decode($options['structure']['my_pages'],true));
+                }
+            break;
+          case 'sitemap' :
+            break;
+          default :
+        }
+        break;
+      default :
+
     }
 
-    $sitemap_monster = ($resources && $my_domain) ?
-      new Sitemap_Monster($my_domain,$resources) : false;
+    $sitemap_monster = ($my_pages_list && $my_domain) ?
+      new Sitemap_Monster($my_domain,$my_pages_list) : false;
 
     $result->sitemap_monster = $sitemap_monster;
     $result->this_path = $this_path;
@@ -135,6 +172,7 @@ class Snail_Tail {
     $result->my_domain = $my_domain;
     $result->options = $this_options;
     $result->map_name = $map_name;
+    $result->resources = $resources;
     $result->format = $format;
 
     return $result;

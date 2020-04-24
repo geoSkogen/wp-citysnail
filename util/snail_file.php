@@ -12,7 +12,7 @@ class Snail_File {
       $result_schema = new Schema($abspath);
       $result = Schema::get_labeled_rows($result_schema->data_index);
     }
-    return $result;
+    $result;
   }
 
   public static function csv_upload_handler() {
