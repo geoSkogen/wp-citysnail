@@ -11,6 +11,8 @@ class Snail_File {
     if (strpos($abspath,'.csv')===strlen($abspath)-4) {
       $result_schema = new Schema($abspath);
       $result = Schema::get_labeled_rows($result_schema->data_index);
+    } else {
+      $result = false;
     }
     $result;
   }

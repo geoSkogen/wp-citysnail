@@ -43,10 +43,39 @@ class Snail_Tail {
 
   }
 
-  public static function validate_structure_file($schema,$table) {
+  public static function validate_structure_file($schema,$table,$list) {
     $result = new stdClass();
     $result->schema = array();
-    $result->error = [0,'no errors'];
+    $result->error = [false,[],[],[]];
+    $index = 0;
+    if ($schema) {
+      foreach ($schema as $key => $arr) {
+        $index = array_search($key,$resources);
+        //FIXED DATA SETTING - error array key assignments:
+        //1 - not found, 2 - missing, 3 - fatal
+        if (!$key) {
+          $result->error[2][] =
+            'missing URI in row: ' . strval($index+1);
+        } else if ( $index || $index===0) {
+          $result->schema[$key] = array();
+          //FIXED DATA SETTING!!! takes first seven arguments only!
+          $endslice = (count($arr) > 7) ? 7 :  count($arr);
+          $result->schema[$key][] = array_slice($arr,0,$endslice);
+        } else {
+          $result->error[1][] = 'URI not found: ' .
+              $key . ' - at row ' . strval($index+1);
+        }
+        $index++;
+      }
+      if (!count(array_keys($result->schema))) {
+        $result->error[3][] = 'invalid data format - no URIs provided';
+      }
+    } else {
+      $result->error[3][] = 'invalid data format - unrecognized file type';
+    }
+
+    $result->error[0] = (count($result->error[3])) ? true : $result->error;
+
     return $result;
   }
 
@@ -140,11 +169,15 @@ class Snail_Tail {
           case 'file' :
               $structure = ($this_path) ?
                 self::validate_structure_file(
-                  Snail_File::parse_structure_file($this_path)
-                  ) : '';
-              $upload_errors = $structure->error;
-              $my_pages_schema = ($structure->error[0] < 3) ? $structure->schema : $my_pages_schema;
-              $my_pages_list = ($structure->error[0] < 3) ? array_keys($structure->schema) : $my_pages_list;
+                  Snail_File::parse_structure_file($this_path),
+                  $this_options,
+                  $resources
+                ) : '';
+
+              $my_pages_schema = ($structure->error[0]) ?
+                $my_pages_schema : $structure->schema;
+              $my_pages_list = ($structure->error[0]) ?
+                $my_pages_list : array_keys($structure->schema);
             break;
           case 'structure' :
             if (isset($options['structure']['my_pages']) &&

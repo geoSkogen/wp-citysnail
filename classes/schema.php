@@ -27,20 +27,21 @@ class Schema {
     }
   }
 
-  public function make_assoc() {
-    //this doesn't do anything yet.
-    //replace with get_labeled_cells(row|col,table)
-    $row_index = 0;
-    $cell_index = 0;
-    $keys = array();
+  public static function make_assoc($data_arr,$bool) {
+    /* bool > false - assumes columns are labeled, returns indexed associative rows */
+    /* bool > true - assumes columns and rows are labeled, returns 2D associative array */
     $result = array();
-    $labeled_data = array();
-    if (true) {
-      return $result;
-    } else {
-      error_log('could not open file');
-      return false;
+    $keys = $data_arr[0];
+    $is_table = ($bool) ? 1 : 0;
+    for ($i = 1; 1 < count($data_arr); $i++) {
+      $row = array();
+      for ($col_index = $is_table; $col_index < count($data_arr[$i]); $col_index++) {
+        $row[$keys[$col_index]] = $data_arr[$i][$col_index];
+      }
+      $row_key = ($is_table) ? $data_arr[$i][0] : $i;
+      $result[$row_key] = $row;
     }
+    return $result;
   }
 
   public static function get_labeled_columns($data_arr) {

@@ -2,7 +2,7 @@
 /*
 Plugin Name:  wp-citysnail
 Description:  SEO cargo, citystyle
-Version:      2020.04.04
+Version:      2020.04.25
 Author:       Joseph Scoggins
 Author URI:   https://joseph-scoggins.com
 Text Domain:  wp_citysnail
