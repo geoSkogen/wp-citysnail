@@ -43,20 +43,25 @@ class Snail_Tail {
 
   }
 
-  public static function validate_structure_file($schema,$table,$list) {
+  public static function validate_structure_file($schema,$table,$list,$host) {
     $result = new stdClass();
     $result->schema = array();
     $result->error = [false,[],[],[]];
     $index = 0;
     if ($schema) {
       foreach ($schema as $key => $arr) {
-        $index = array_search($key,$resources);
+        //TRIM KEY of extra slashes
+        $key = (strpos($key,'/')===0) ? substr($key,1) :  $key;
+        $key = (substr($key,strlen($key)-1,1)==='/') ?
+          substr($key,0,strlen($key)-1) :  $key;
+        $abs = in_array($key,$resources);
+        $rel = in_array($host . '/' . $key . '/');
         //FIXED DATA SETTING - error array key assignments:
         //1 - not found, 2 - missing, 3 - fatal
         if (!$key) {
           $result->error[2][] =
             'missing URI in row: ' . strval($index+1);
-        } else if ( $index || $index===0) {
+        } else if ( $abs || $rel ) {
           $result->schema[$key] = array();
           //FIXED DATA SETTING!!! takes first seven arguments only!
           $endslice = (count($arr) > 7) ? 7 :  count($arr);
@@ -125,6 +130,9 @@ class Snail_Tail {
 
     $this_domain = ( isset($options['home']['domain']) ) ?
       $options['home']['domain'] : '';
+    $this_domain = (substr($this_domain,strlen($this_domain)-1,1)==='/') ?
+        substr($this_domain,0,strlen($this_domain)-1) : $this_domain;
+
 
     $map_name = ( isset($options['home']['sitemap']) ) ?
       $options['home']['sitemap'] : 'sitemap.xml';
@@ -171,7 +179,8 @@ class Snail_Tail {
                 self::validate_structure_file(
                   Snail_File::parse_structure_file($this_path),
                   $this_options,
-                  $resources
+                  $resources,
+                  $my_domain
                 ) : '';
 
               $my_pages_schema = ($structure->error[0]) ?
