@@ -48,14 +48,14 @@ class Snail_Tail {
     $result->schema = array();
     $result->error = [false,[],[],[]];
     $index = 0;
-    if ($schema) {
+    if (is_array($schema)) {
       foreach ($schema as $key => $arr) {
         //TRIM KEY of extra slashes
         $key = (strpos($key,'/')===0) ? substr($key,1) :  $key;
         $key = (substr($key,strlen($key)-1,1)==='/') ?
           substr($key,0,strlen($key)-1) :  $key;
-        $abs = in_array($key,$resources);
-        $rel = in_array($host . '/' . $key . '/');
+        $abs = in_array($key . '/',$list);
+        $rel = in_array($host . '/' . $key . '/',$list);
         //FIXED DATA SETTING - error array key assignments:
         //1 - not found, 2 - missing, 3 - fatal
         if (!$key) {
@@ -182,7 +182,10 @@ class Snail_Tail {
                   $resources,
                   $my_domain
                 ) : '';
+              foreach($structure->error as $key => $val) {
+                
 
+              };
               $my_pages_schema = ($structure->error[0]) ?
                 $my_pages_schema : $structure->schema;
               $my_pages_list = ($structure->error[0]) ?
@@ -191,8 +194,11 @@ class Snail_Tail {
           case 'structure' :
             if (isset($options['structure']['my_pages']) &&
                 is_string($options['structure']['my_pages'])) {
+
                   $my_pages_schema = $options['structure']['my_pages'];
-                  $my_pages_list = array_keys(json_decode($options['structure']['my_pages'],true));
+                  $my_pages_list = array_keys(
+                    json_decode($options['structure']['my_pages'],true)
+                  );
                 }
             break;
           case 'sitemap' :
@@ -216,7 +222,11 @@ class Snail_Tail {
     $result->map_name = $map_name;
     $result->resources = $resources;
     $result->format = $format;
-
+    /*
+    foreach($resources as $url) {
+      echo $url . "<br/>";
+    }
+    */
     return $result;
   }
 
