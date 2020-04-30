@@ -62,10 +62,9 @@ class Snail_Tail {
           $result->error[2][] =
             'missing URI in row: ' . strval($index+1);
         } else if ( $abs || $rel ) {
-          $result->schema[$key] = array();
           //FIXED DATA SETTING!!! takes first seven arguments only!
           $endslice = (count($arr) > 7) ? 7 :  count($arr);
-          $result->schema[$key][] = array_slice($arr,0,$endslice);
+          $result->schema[$key . '/'] = array_slice($arr,0,$endslice);
         } else {
           $result->error[1][] = 'URI not found: ' .
               $key . ' - at row ' . strval($index+1);
@@ -79,7 +78,7 @@ class Snail_Tail {
       $result->error[3][] = 'invalid data format - unrecognized file type';
     }
 
-    $result->error[0] = (count($result->error[3])) ? true : $result->error;
+    $result->error[0] = (count($result->error[3])) ? true : $result->error[0];
 
     return $result;
   }
@@ -112,10 +111,10 @@ class Snail_Tail {
     $this_options = get_option($this_db_slug);
     $dropped = (isset($this_options['drop'])) ? $this_options['drop'] : '';
     if ($dropped === "TRUE") {
-      error_log('got drop');
+      error_log('got drop call for options => ' . $this_db_slug);
       delete_option($this_db_slug);
     } else {
-      error_log("drop=false");
+      //error_log("drop=false");
     }
 
     foreach($db_slugs as $slug) {
@@ -124,6 +123,8 @@ class Snail_Tail {
       $prop = ($slug) ? $slug : 'home';
       $options[$prop] = get_option($key);
     }
+
+    $message_table = '<table>';
 
     $this_path = ( isset($options['structure']['structure_path']) ) ?
       $options['structure']['structure_path'] : '';
@@ -182,14 +183,19 @@ class Snail_Tail {
                   $resources,
                   $my_domain
                 ) : '';
-              foreach($structure->error as $key => $val) {
-                
-
+              for ($i = 1; $i < count($structure->error); $i++) {
+                foreach ($structure->error[$i] as $msg) {
+                  $message_table .= "<tr>error #" . strval($i) . ": " . $msg. "</tr>";
+                }
               };
-              $my_pages_schema = ($structure->error[0]) ?
-                $my_pages_schema : $structure->schema;
-              $my_pages_list = ($structure->error[0]) ?
-                $my_pages_list : array_keys($structure->schema);
+              if (!$structure->error[0]) {
+                error_log('got valid file crawl');
+                $my_pages_schema = $structure->schema;
+                $my_pages_list = array_keys($structure->schema);
+              } else {
+                $format = 'sitemap';
+                error_log('fatal structure file error');
+              }
             break;
           case 'structure' :
             if (isset($options['structure']['my_pages']) &&
@@ -212,7 +218,7 @@ class Snail_Tail {
 
     $sitemap_monster = ($my_pages_list && $my_domain) ?
       new Sitemap_Monster($my_domain,$my_pages_list) : false;
-
+    $message_table .= '</table>';
     $result->sitemap_monster = $sitemap_monster;
     $result->this_path = $this_path;
     $result->my_pages_list = $my_pages_list;
@@ -222,11 +228,8 @@ class Snail_Tail {
     $result->map_name = $map_name;
     $result->resources = $resources;
     $result->format = $format;
-    /*
-    foreach($resources as $url) {
-      echo $url . "<br/>";
-    }
-    */
+    $result->message = $message_table;
+
     return $result;
   }
 

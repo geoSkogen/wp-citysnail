@@ -145,7 +145,7 @@ class Citysnail_Settings {
     $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='sitemap' {$select['sitemap']}/>";
     $str .= "<label class='radioLabel' for='sitemap'>full sitemap</label>";
     $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='file' {$select['file']}/>";
-    $str .= "<label class='radioLabel' for='sitemap'>re-crawl structure file</label>";
+    $str .= "<label class='radioLabel' for='sitemap'>crawl structure file</label>";
     $str .= "</div>";
 
     $str .= "<div class='flexOuterStart'>";
@@ -163,6 +163,7 @@ class Citysnail_Settings {
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";
     //uploader inputs
     echo $str;
+    echo $client_snail->message;
     //interactive sitemap table
     if ($client_snail->sitemap_monster) {
       echo $client_snail->sitemap_monster->get_html_table($client_snail->options);
