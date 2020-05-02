@@ -93,17 +93,20 @@ class Snail_Tail {
     return $schema;
   }
 
+  public static function scrape_sitemap($my_domain,$map_name,$table) {
+    $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
+    $resources = Snail::parse_sitemap_dom($map_dom);
+    $table['resources'] = $resources;
+    update_option('wp_citysnail_keywords',$table);
+    return $resources;
+  }
+
   public static function get_client_snail($db_prefix,$db_slugs,$this_db_slug) {
 
     $result = new stdClass();
     $options = array(
       'home'
     );
-    /*
-    $options['home'] = get_option('wp_citysnail');
-    $options['structure'] = get_option('wp_citysnail_structure');
-    $options['keywords'] = get_option('wp_citysnail_keywords');
-    */
     /*
     $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
     $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
@@ -164,10 +167,8 @@ class Snail_Tail {
         count($options['keywords']['resources'])) {
       $resources = $options['keywords']['resources'];
     } else {
-      $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
-      $resources = Snail::parse_sitemap_dom($map_dom);
+      $resources = self::scrape_sitemap($my_domain,$map_name,$options['keywords']);
     }
-    //default setting - use the resources array or crawl the whole site
     $my_pages_schema = self::get_page_schema($resources,$options['structure']);
     $my_pages_list = $resources;
 
@@ -207,8 +208,7 @@ class Snail_Tail {
                 }
             break;
           case 'sitemap' :
-            $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
-            $resources = Snail::parse_sitemap_dom($map_dom);
+            $resources = self::scrape_sitemap($my_domain,$map_name,$options['keywords']);
             $my_pages_schema = self::get_page_schema($resources,$options['structure']);
             $my_pages_list = $resources;
             break;
@@ -219,9 +219,9 @@ class Snail_Tail {
 
     }
 
-    print 'this is resource test';
+    print 'this is resource test' . '<br/>';
     foreach ($resources as $resource) {
-      print $resource;
+      print $resource . "<br/>";
     }
 
     $sitemap_monster = ($my_pages_list && $my_domain) ?

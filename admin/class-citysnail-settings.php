@@ -107,10 +107,6 @@ class Citysnail_Settings {
   }
 
   static function wp_citysnail_structure_field() {
-    /*
-    $this_path = Snail_Tail::try_option_key($options,'structure_path','string');
-    $this_file = Snail_Tail::try_option_key($options,'structure_file','string');
-    */
     $client_snail = Snail_Tail::get_client_snail(
       self::$db_prefix,
       self::$db_slugs,
@@ -127,7 +123,6 @@ class Citysnail_Settings {
           $client_snail->this_path
         )
       );
-
     //display options
     $value_tag = (!$client_snail->this_path) ? 'placeholder' : 'value';
     $placeholder = (!$client_snail->this_path) ? '(not set)' : $client_snail->this_path;
@@ -136,7 +131,7 @@ class Citysnail_Settings {
     $input_is_set = (!$client_snail->this_path) ? '' : ' slight';
     $select = array( 'sitemap' => '', 'structure' => '', 'file'=>'',''=>'');
     $select[$client_snail->format] = 'checked';
-    $my_pages_db_map = " name='wp_citysnail_structure[my_pages]' "; 
+    $my_pages_db_map = " name='wp_citysnail_structure[my_pages]' ";
     //uploader inputs
     $str = "";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
@@ -225,7 +220,6 @@ class Citysnail_Settings {
       $client_data
     );
     */
-
     wp_enqueue_script('wp-citysnail-fa', 'https://kit.fontawesome.com/a076d05399.js');
     foreach ($scripts as $script) {
       wp_enqueue_script($script, plugin_dir_url(__FILE__) . '../lib/citysnail_' . $script . '.js');
