@@ -136,6 +136,7 @@ class Citysnail_Settings {
     $input_is_set = (!$client_snail->this_path) ? '' : ' slight';
     $select = array( 'sitemap' => '', 'structure' => '', 'file'=>'',''=>'');
     $select[$client_snail->format] = 'checked';
+    $my_pages_db_map = " name='wp_citysnail_structure[my_pages]' "; 
     //uploader inputs
     $str = "";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
@@ -156,8 +157,8 @@ class Citysnail_Settings {
     $str .= "<input id='structure_file' type='file' class='citysnail'
       name='wp_citysnail_structure[structure_file]'/>";
     $str .= "</div></div>";
-    $str .= "<input type='text' class='citysnail invis' id='my_pages'
-      name='wp_citysnail_structure[my_pages]' value='{$client_snail->my_pages_schema}'/>";
+    $str .= "<input type='text' class='citysnail invis' id='my_pages' $my_pages_db_map
+       value='{$client_snail->my_pages_schema}'/>";
     //$str .= "<input type='text' class='invis' id='post_title' name='post_title' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='text' class='invis' id='post_content' name='post_content' value='{$this_domain}_structure_worksheet'/>";
     //$str .= "<input type='hidden' name='action' value='citysnail_submit_structure'>";

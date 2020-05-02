@@ -134,7 +134,6 @@ class Snail_Tail {
     $this_domain = (substr($this_domain,strlen($this_domain)-1,1)==='/') ?
         substr($this_domain,0,strlen($this_domain)-1) : $this_domain;
 
-
     $map_name = ( isset($options['home']['sitemap']) ) ?
       $options['home']['sitemap'] : 'sitemap.xml';
 
@@ -168,7 +167,7 @@ class Snail_Tail {
       $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
       $resources = Snail::parse_sitemap_dom($map_dom);
     }
-    //default setting - crawl the whole site
+    //default setting - use the resources array or crawl the whole site
     $my_pages_schema = self::get_page_schema($resources,$options['structure']);
     $my_pages_list = $resources;
 
@@ -208,12 +207,21 @@ class Snail_Tail {
                 }
             break;
           case 'sitemap' :
+            $map_dom = Snail::curl_get_dom($my_domain . '/' . $map_name);
+            $resources = Snail::parse_sitemap_dom($map_dom);
+            $my_pages_schema = self::get_page_schema($resources,$options['structure']);
+            $my_pages_list = $resources;
             break;
           default :
         }
         break;
       default :
 
+    }
+
+    print 'this is resource test';
+    foreach ($resources as $resource) {
+      print $resource;
     }
 
     $sitemap_monster = ($my_pages_list && $my_domain) ?

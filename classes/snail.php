@@ -166,7 +166,7 @@ class Snail {
 
         $this_node_val = $locs->item($i)->nodeValue;
 
-        if (!strpos($this_node_val,'wp-content/uploads')) {
+        if (!strpos($this_node_val,'wp-content')) {
           $resource_arr[] = $this_node_val;
           error_log($this_node_val);
         } else {
