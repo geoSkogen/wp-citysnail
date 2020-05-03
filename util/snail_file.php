@@ -17,19 +17,24 @@ class Snail_File {
     return $result;
   }
 
-  public static function csv_upload_handler() {
-    $post_data = array(
-  		'post_title' => $_POST['post_title'],
-  		'post_content' => $_POST['post_content'],
-  		'post_status' => 'draft'
-  	);
+  public static function upload_handler() {
 
-  	$post_id = wp_insert_post( $post_data );
+    $post_data = array(
+      'post_title' => $_POST['post_title'],
+      'post_content' => $_POST['post_content'],
+      'post_status' => 'draft'
+    );
+    echo $_POST['post_title'];
+    echo '<br/>';
+    echo $_POST['post_content'];
+    echo '<br/>';
+
+    $post_id = wp_insert_post( $post_data );
 
     $upload = wp_upload_bits(
-      $_FILES['wp_citysnail[structure_file]']['name'],
+      $_FILES['wp_citysnail_structure_file']['name'],
       null,
-      file_get_contents( $_FILES['wp_citysnail[structure_file]']['tmp_name'] )
+      file_get_contents( $_FILES['wp_citysnail_structure_file']['tmp_name'] )
     );
 
     $wp_filetype = wp_check_filetype( basename( $upload['file'] ), null );
@@ -53,8 +58,8 @@ class Snail_File {
 
     update_post_meta( $post_id, '_thumbnail_id', $attach_id );
 
-  	wp_redirect( amdin_url() . '?page=wp_citysnail_structure' );
+    wp_redirect( site_url() );
 
-  	die();
+    die();
   }
 }
