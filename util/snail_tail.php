@@ -50,11 +50,7 @@ class Snail_Tail {
     $index = 0;
     if (is_array($schema)) {
       foreach ($schema as $key => $arr) {
-        //TRIM KEY of extra slashes
-        $key = (strpos($key,'/')===0) ? substr($key,1) :  $key;
-        $key = (substr($key,strlen($key)-1,1)==='/') ?
-          substr($key,0,strlen($key)-1) :  $key;
-        $abs = in_array($key . '/',$list);
+        $abs = in_array($key,$list);
         $rel = in_array($host . '/' . $key . '/',$list);
         //FIXED DATA SETTING - error array key assignments:
         //1 - not found, 2 - missing, 3 - fatal
@@ -64,7 +60,7 @@ class Snail_Tail {
         } else if ( $abs || $rel ) {
           //FIXED DATA SETTING!!! takes first seven arguments only!
           $endslice = (count($arr) > 7) ? 7 :  count($arr);
-          $result->schema[$key . '/'] = array_slice($arr,0,$endslice);
+          $result->schema[$key] = array_slice($arr,0,$endslice);
         } else {
           $result->error[1][] = 'URI not found: ' .
               $key . ' - at row ' . strval($index+1);
@@ -218,12 +214,12 @@ class Snail_Tail {
       default :
 
     }
-
+    /*
     print 'this is resource test' . '<br/>';
     foreach ($resources as $resource) {
       print $resource . "<br/>";
     }
-
+    */
     $sitemap_monster = ($my_pages_list && $my_domain) ?
       new Sitemap_Monster($my_domain,$my_pages_list) : false;
     $message_table .= '</table>';
