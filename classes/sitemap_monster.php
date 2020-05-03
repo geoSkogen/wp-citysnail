@@ -89,7 +89,7 @@ class Sitemap_Monster {
   }
 
   public function urls_from_arrays() {
-    $arr = [];
+    $arr = [$this->domain . '/'];
     foreach ($this->new_page_arrs as $url_arr) {
       $arr[] = $this->domain . '/' . join('/', $url_arr) . '/';
     }

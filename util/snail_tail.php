@@ -181,15 +181,24 @@ class Snail_Tail {
                 ) : '';
               for ($i = 1; $i < count($structure->error); $i++) {
                 foreach ($structure->error[$i] as $msg) {
-                  $message_table .= "<tr>error #" . strval($i) . ": " . $msg. "</tr>";
+                  $message_table .=
+                    "<tr>error #" . strval($i) . ": " . $msg. "</tr><br/>";
                 }
               };
               if (!$structure->error[0]) {
                 error_log('got valid file crawl');
                 $my_pages_schema = $structure->schema;
                 $my_pages_list = array_keys($structure->schema);
+                $this_table = array(
+                  'structure_path' => $this_path,
+                  'my_pages' => json_encode($my_pages_schema),
+                  'structure_file' => null
+                );
+                foreach( $my_pages_list as $url_str) {
+                  $this_table[$url_str] = implode(',',$my_pages_schema[$url_str]);
+                }
+                update_option($this_db_slug,$this_table);
               } else {
-                $format = 'sitemap';
                 error_log('fatal structure file error');
               }
             break;
@@ -214,12 +223,7 @@ class Snail_Tail {
       default :
 
     }
-    /*
-    print 'this is resource test' . '<br/>';
-    foreach ($resources as $resource) {
-      print $resource . "<br/>";
-    }
-    */
+    
     $sitemap_monster = ($my_pages_list && $my_domain) ?
       new Sitemap_Monster($my_domain,$my_pages_list) : false;
     $message_table .= '</table>';
@@ -231,7 +235,7 @@ class Snail_Tail {
     $result->options = $this_options;
     $result->map_name = $map_name;
     $result->resources = $resources;
-    $result->format = $format;
+    $result->format = 'structure';
     $result->message = $message_table;
 
     return $result;

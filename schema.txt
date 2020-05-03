@@ -14,6 +14,8 @@ options table
 
         my_pages
 
+        {{url}}
+
     wp_citysnail_keywords
 
         domain
@@ -23,5 +25,3 @@ options table
         report
 
             {full_url}
-
-                

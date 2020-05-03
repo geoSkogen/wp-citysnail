@@ -11,11 +11,13 @@ class Sitemap_Snail {
   public function get_slug_arr($url) {
     $uri = str_replace($this->sitemap_monster->domain,'',$url);
     $slug_arr = explode('/',$uri);
-    if (substr($uri,0,1) == '/' && substr($uri,-1) =='/') {
+    if (substr($uri,0,1) == '/') {
       array_splice($slug_arr,0,1);
+    }
+    if (substr($uri,-1) =='/') {
       array_splice($slug_arr,-1,1);
     }
-    return $slug_arr;
+    return (count($slug_arr)) ? $slug_arr : [''];
   }
 
   public function class_name_manager($arr, $item_type) {
@@ -30,9 +32,10 @@ class Sitemap_Snail {
 
   public function do_sitemap_item($url) {
     $slug_arr = $this->get_slug_arr($url);
-    $has_children = count(
-      $this->sitemap_monster->is_parent_dir_of(
-        $slug_arr[0],$slug_arr[count($slug_arr)-1],count($slug_arr)
+    $has_children =
+      count(
+        $this->sitemap_monster->is_parent_dir_of(
+          $slug_arr[0],$slug_arr[count($slug_arr)-1],count($slug_arr)
       )
     );
     $display_toggle = (count($slug_arr) > 1) ? 'block' : 'notoggle';

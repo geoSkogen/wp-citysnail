@@ -135,13 +135,13 @@ class Citysnail_Settings {
     //uploader inputs
     $str = "";
     //$str .= wp_nonce_field( 'citysnail_submit_structure', 'structure_file_nonce_field');
-    $str .= "<div class='flexOuterStart'><span>Crawl Options:</span>";
+    $str .= "<div class='flexOuterStart'><span>Options:</span>";
     $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='structure' {$select['structure']}/>";
     $str .= "<label class='radioLabel' for='structure'>my structure worksheet</label>";
-    $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='sitemap' {$select['sitemap']}/>";
-    $str .= "<label class='radioLabel' for='sitemap'>full sitemap</label>";
     $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='file' {$select['file']}/>";
     $str .= "<label class='radioLabel' for='sitemap'>crawl structure file</label>";
+    $str .= "<input type='radio' name='wp_citysnail_structure[format]' value='sitemap' {$select['sitemap']}/>";
+    $str .= "<label class='radioLabel' for='sitemap'>crawl full sitemap</label>";
     $str .= "</div>";
 
     $str .= "<div class='flexOuterStart'>";
