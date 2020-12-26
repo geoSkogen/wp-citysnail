@@ -4,7 +4,7 @@ Plugin Name:  wp-citysnail
 Description:  SEO cargo, citystyle
 Version:      2020.05.02
 Author:       Joseph Scoggins
-Author URI:   https://joseph-scoggins.com
+Author URI:   https://github.com/geoSkogen
 Text Domain:  wp_citysnail
 */
 defined( 'ABSPATH' ) or die( 'We make the path by walking.');

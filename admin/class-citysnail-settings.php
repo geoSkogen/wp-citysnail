@@ -169,7 +169,7 @@ class Citysnail_Settings {
   static function do_simple_dynamic_input($db_slug,$this_field,$fallback_str) {
     $options = ( get_option($db_slug) ) ? get_option($db_slug) : $db_slug;
     //$placeholder = Snail_Tail::try_option_key($options,$this_field,$fallback_str);
-    $placeholder = ("" != ($options[$this_field])) ? $options[$this_field] : $fallback_str;
+    $placeholder = (!empty($options[$this_field])) ? $options[$this_field] : $fallback_str;
     $value_tag = ($placeholder === $fallback_str) ? "placeholder" : "value";
     return "<input type='text' class='citysnail zeroTest' id='{$this_field}'
       name={$db_slug}[$this_field] {$value_tag}='{$placeholder}'/>";
@@ -238,10 +238,14 @@ class Citysnail_Settings {
       'resources' => array(),
       'report' => ''
     );
-    foreach ($client_snail->sitemap_monster->new_map as $page_url) {
-      $report_schema['resources'][] = $page_url;
-      echo $sitemap_snail->do_sitemap_item($page_url);
+
+    if (!empty($client_snail->sitemap_monster->new_map)) {
+      foreach ($client_snail->sitemap_monster->new_map as $page_url) {
+        $report_schema['resources'][] = $page_url;
+        echo $sitemap_snail->do_sitemap_item($page_url);
+      }
     }
+
     $schema_string = json_encode($report_schema);
     update_option($db_slug,$report_schema);
     echo '<div id="report_schema" class="citysnail invis">' . $schema_string . '</div>';
