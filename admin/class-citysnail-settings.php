@@ -47,7 +47,7 @@ class Citysnail_Settings {
 
     add_settings_field(
       'domain',                   //uniqueID - "param_1", etc.
-      'Domain',                  //uniqueTitle -
+      'Domain<br/><sub style="opacity:0.45;">format -<br/>https://mydomain.tld</sub>',                  //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_domain_field'),//callback
       'wp_citysnail',                   //page-slug
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
@@ -55,7 +55,7 @@ class Citysnail_Settings {
 
     add_settings_field(
       'sitemap',                   //uniqueID - "param_1", etc.
-      'Sitemap',                  //uniqueTitle -
+      'Sitemap<br/><sub style="opacity:0.45;">example -<br/>page-sitemap.xml</sub>',                  //uniqueTitle -
       array('Citysnail_Settings','wp_citysnail_sitemap_field'),//callback
       'wp_citysnail',                   //page-slug
       'wp_citysnail_settings'          //section (parent settings-section uniqueID)
